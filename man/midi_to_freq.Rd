@@ -2,10 +2,18 @@
 % Please edit documentation in R/parncutt.R
 \name{midi_to_freq}
 \alias{midi_to_freq}
-\title{Converts MIDI note numbers to frequencies}
+\title{Convert MIDI note numbers to frequencies}
 \usage{
 midi_to_freq(midi, stretched_octave = TRUE)
 }
+\arguments{
+\item{midi}{Numeric vector of MIDI note numbers}
+
+\item{stretched_octave}{Logical scalar; whether or not to use a stretched octave}
+}
+\value{
+Numeric vector of frequencies in kHz
+}
 \description{
-Converts MIDI note numbers to frequencies
+Converts MIDI note numbers to frequencies (kHz), optionally using stretched octaves. Corresponds to Equation 1 of Parncutt & Strasburger (1994).
 }
