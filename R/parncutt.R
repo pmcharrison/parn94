@@ -19,46 +19,72 @@ setMethod(
 )
 
 setClass("midi_spectrum",
-         slots = list(midi_pitch = "numeric",
-                      level = "numeric",
-                      kHz = "numeric",
-                      free_field_threshold = "numeric",
-                      auditory_level = "numeric",
-                      pure_tone_height = "numeric",
-                      overall_masking_level = "numeric",
-                      audible_level = "numeric",
-                      audibility = "numeric"))
+         slots = list(
+           pure_spectrum = "data.frame",
+           complex_spectrum = "data.frame",
+           combined_spectrum = "data.frame",
+           pure_sonorousness = "numeric",
+           complex_sonorousness = "numeric",
+           multiplicity = "numeric"))
+#' @param k_t
+#' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105)
+#' @param k_c Parncutt & Strasburger (1994) set this to 0.2 (p. 105)
 setMethod(
   f = "initialize",
   signature = "midi_spectrum",
-  definition = function(.Object, midi_pitch, level, keep_inaudible = FALSE) {
+  definition = function(.Object,
+                        midi_pitch,
+                        level,
+                        keep_inaudible = FALSE,
+                        template_num_harmonics = 11, # including fundamental
+                        template_roll_off = function(x) 1 / (1 + x),
+                        k_t = 3,
+                        k_p = 0.5,
+                        k_c = 0.2) {
     assertthat::assert_that(
       length(midi_pitch) == length(level),
       !anyDuplicated(midi_pitch)
     )
     order <- order(midi_pitch, decreasing = FALSE)
-    .Object@midi_pitch <- midi_pitch[order]
-    .Object@level <- level[order]
-    .Object@kHz <- midi_to_freq(.Object@midi_pitch, stretched_octave = TRUE)
-    .Object@free_field_threshold <- free_field_threshold(kHz = .Object@kHz)
-    .Object@auditory_level <- pmax(.Object@level - .Object@free_field_threshold, 0)
-    .Object@pure_tone_height <- pure_tone_height(kHz = .Object@kHz)
-    .Object@overall_masking_level <- overall_masking_level(
-      auditory_level = .Object@auditory_level,
-      pure_tone_height = .Object@pure_tone_height
+    pure_spectrum <- data.frame(midi_pitch = midi_pitch[order],
+                                level = level[order])
+    pure_spectrum$kHz <- midi_to_freq(pure_spectrum$midi_pitch,
+                                      stretched_octave = TRUE)
+    pure_spectrum$free_field_threshold <- free_field_threshold(kHz = pure_spectrum$kHz)
+    pure_spectrum$auditory_level <- pmax(pure_spectrum$level -
+                                           pure_spectrum$free_field_threshold, 0)
+    pure_spectrum$pure_tone_height <- pure_tone_height(kHz = pure_spectrum$kHz)
+    pure_spectrum$overall_masking_level <- overall_masking_level(
+      auditory_level = pure_spectrum$auditory_level,
+      pure_tone_height = pure_spectrum$pure_tone_height
         )
-    .Object@audible_level <- get_audible_level(auditory_level = .Object@auditory_level,
-                                                overall_masking_level = .Object@overall_masking_level)
-    .Object@audibility <- get_audibility(audible_level = .Object@audible_level)
+    pure_spectrum$pure_tone_audible_level <- get_pure_tone_audible_level(
+      auditory_level = pure_spectrum$auditory_level,
+      overall_masking_level = pure_spectrum$overall_masking_level
+    )
+    pure_spectrum$pure_tone_audibility <- get_pure_tone_audibility(
+      pure_tone_audible_level = pure_spectrum$pure_tone_audible_level
+    )
     if (!keep_inaudible) {
-      to_keep <- .Object@audibility > 0
-      for (property in c("midi_pitch", "level", "kHz", "free_field_threshold",
-                         "auditory_level", "pure_tone_height",
-                         "overall_masking_level", "audible_level",
-                         "audibility")) {
-        slot(.Object, property) <- slot(.Object, property)[to_keep]
-      }
+      pure_spectrum <- pure_spectrum[pure_spectrum$pure_tone_audibility > 0, ]
     }
+    .Object@pure_spectrum <- pure_spectrum
+    .Object@complex_spectrum <- get_complex_tone_audibility(
+      midi_pitch = pure_spectrum$midi_pitch,
+      pure_tone_audibility = pure_spectrum$pure_tone_audibility,
+      template_num_harmonics = template_num_harmonics,
+      template_roll_off = template_roll_off,
+      k_t = k_t
+    )
+    pure_spectrum$pure_sonorousness <- get_pure_sonorousness(
+      pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
+      k_p = k_p
+    )
+    .Object@complex_sonorousness <- get_complex_sonorousness(
+      complex_tone_audibility <-
+        .Object@complex_spectrum$complex_tone_audibility,
+      k_c = k_c
+    )
     return(.Object)
   }
 )
@@ -75,8 +101,8 @@ setMethod(
                      auditory_level = x@auditory_level,
                      pure_tone_height = x@pure_tone_height,
                      overall_masking_level = x@overall_masking_level,
-                     audible_level = x@audible_level,
-                     audibility = x@audibility)
+                     pure_tone_audible_level = x@pure_tone_audible_level,
+                     pure_tone_audibility = x@pure_tone_audibility)
     rownames(df) <- row.names
     df
   }
@@ -102,9 +128,10 @@ setMethod("get_midi_spectrum", signature("pitch_set"),
                    level = 60,
                    num_harmonics = 11, # including the fundamental
                    roll_off = function(x) 1 / (1 + x)) {
-            harmonic_numbers <- seq(from = 0, length.out = num_harmonics)
-            template <- data.frame(pitch = round(12 * log(harmonic_numbers + 1, base = 2)),
-                                   level = level * do.call(roll_off, list(harmonic_numbers)))
+            template <- get_harmonic_template(
+              num_harmonics = num_harmonics,
+              level = level, roll_off = roll_off
+            )
             spectrum <- new.env()
             for (pitch in object@midi_pitches) {
               # Iterate over every fundamental frequency and add the spectral template
@@ -115,7 +142,6 @@ setMethod("get_midi_spectrum", signature("pitch_set"),
                 }
               }, template$pitch + pitch, template$level)
             }
-            print(keep_inaudible)
             spectrum <- as.list(spectrum) %>%
               (function(x) new("midi_spectrum",
                                midi_pitch = as.numeric(names(x)),
@@ -123,6 +149,19 @@ setMethod("get_midi_spectrum", signature("pitch_set"),
                                keep_inaudible = keep_inaudible))
             spectrum
           })
+
+#' @param num_harmonics Number of harmonics (including fundamental)
+#' @param level Level of the fundamental frequency
+#' @param roll_off Function determining the level of the nth harmonic. Default value corresponds to Equation 9 of Parncutt and Strasburger (1994)
+#' @export
+get_harmonic_template <- function(num_harmonics,
+                                  level,
+                                  roll_off = function(x) 1 / (1 + x)) {
+  harmonic_numbers <- seq(from = 0, length.out = num_harmonics)
+  template <- data.frame(pitch = round(12 * log(harmonic_numbers + 1, base = 2)),
+                         level = level * do.call(roll_off, list(harmonic_numbers)))
+  template
+}
 
 #' Sums pairs of sound levels assuming either coherent or incoherent (default) wave superposition
 #' @param x The first sound level to be summed in dB (can be vectorised)
@@ -260,7 +299,7 @@ overall_masking_level <- function(auditory_level, pure_tone_height, k_m = 12) {
 #' @param overall_masking_level Numeric vector of overall masking levels for a set of pure tones (dB)
 #' @return Numeric vector of audible levels (dB)
 #' @export
-get_audible_level <- function(auditory_level, overall_masking_level) {
+get_pure_tone_audible_level <- function(auditory_level, overall_masking_level) {
   assertthat::assert_that(length(auditory_level) == length(overall_masking_level))
   pmax(0, auditory_level - overall_masking_level)
 }
@@ -271,6 +310,50 @@ get_audible_level <- function(auditory_level, overall_masking_level) {
 #' @param audible_level Numeric vector of audible levels (dB)
 #' @param al_0 constant (see Equation 7 of Parncutt & Strasburger (1994).)
 #' @export
-get_audibility <- function(audible_level, al_0 = 15) {
-  1 - exp(- audible_level / al_0)
+get_pure_tone_audibility <- function(pure_tone_audible_level, al_0 = 15) {
+  1 - exp(- pure_tone_audible_level / al_0)
+}
+
+#' @param k_t corresponds to parameter \eqn{k_t} in Equation 10 of Parncutt & Strasburger (1994)
+get_complex_tone_audibility <- function(midi_pitch, pure_tone_audibility,
+                                        template_num_harmonics,
+                                        template_roll_off,
+                                        k_t) {
+  spectrum <- data.frame(midi_pitch = midi_pitch,
+                         pure_tone_audibility = pure_tone_audibility)
+  template <- get_harmonic_template(num_harmonics = template_num_harmonics,
+                                    level = 1,
+                                    roll_off = template_roll_off)
+  res <- data.frame(midi_pitch = seq(from = min(midi_pitch) - max(template$pitch),
+                                     to = max(midi_pitch)),
+                    complex_tone_audibility = NA)
+  res$complex_tone_audibility <- vapply(
+    res$midi_pitch,
+    function(pitch) {
+      transposed_template <- data.frame(midi_pitch = template$pitch + pitch,
+                                        weight = template$level)
+      df <- merge(transposed_template, spectrum,
+                  all.x = FALSE, all.y = FALSE)
+      ((sum(sqrt(df$weight * df$pure_tone_audibility))) ^ 2) / k_t
+    }, numeric(1)
+  )
+  res <- res[res$complex_tone_audibility > 0, ]
+}
+
+get_audibility <- function()
+
+#' @param pure_tone_audibility Numeric vector of pure tone audibilities
+#' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105)
+get_pure_sonorousness <- function(pure_tone_audibility, k_p) {
+  k_p * sqrt(sum(pure_tone_audibility ^ 2))
+}
+
+#' @param complex_tone_audibility Numeric vector of complex tone audibilities
+#' @param k_c Parncutt & Strasburger (1994) set this to 0.2 (p. 105)
+get_complex_sonorousness <- function(complex_tone_audibility, k_c) {
+  k_c * max(complex_tone_audibility)
+}
+
+get_multiplicity <- function() {
+
 }
