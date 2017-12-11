@@ -42,7 +42,8 @@ setMethod(
                         k_t = 3,
                         k_p = 0.5,
                         k_c = 0.2,
-                        k_s = 0.5) {
+                        k_s = 0.5,
+                        min_midi = 0, max_midi = 120) {
     assertthat::assert_that(
       length(midi_pitch) == length(level),
       !anyDuplicated(midi_pitch)
@@ -59,7 +60,7 @@ setMethod(
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
       template_num_harmonics = template_num_harmonics,
       template_roll_off = template_roll_off,
-      k_t = k_t
+      k_t = k_t, min_midi = min_midi, max_midi = max_midi
     )
     .Object@combined_spectrum <- get_combined_spectrum(
       pure_midi_pitch = .Object@pure_spectrum$midi_pitch,
@@ -144,7 +145,8 @@ setGeneric("get_midi_spectrum",
                     keep_inaudible = FALSE,
                     level = 60,
                     num_harmonics = 10,
-                    roll_off = function(x) 1 / (1 + x)) {
+                    roll_off = function(x) 1 / (1 + x),
+                    min_midi = 0, max_midi = 120) {
              standardGeneric("get_midi_spectrum")
            })
 #' @export
@@ -153,7 +155,8 @@ setMethod("get_midi_spectrum", signature("pitch_set"),
                    keep_inaudible = FALSE,
                    level = 60,
                    num_harmonics = 11, # including the fundamental
-                   roll_off = function(x) 1 / (1 + x)) {
+                   roll_off = function(x) 1 / (1 + x),
+                   min_midi = 0, max_midi = 120) {
             template <- get_harmonic_template(
               num_harmonics = num_harmonics,
               level = level, roll_off = roll_off
@@ -162,9 +165,11 @@ setMethod("get_midi_spectrum", signature("pitch_set"),
             for (pitch in object@midi_pitches) {
               # Iterate over every fundamental frequency and add the spectral template
               mapply(function(pitch, level) {
-                key <- as.character(pitch)
-                spectrum[[key]] <<- if (is.null(spectrum[[key]])) level else {
-                  sum_sound_levels(spectrum[[key]], level, coherent = FALSE)
+                if (pitch >= min_midi && pitch <= max_midi) {
+                  key <- as.character(pitch)
+                  spectrum[[key]] <<- if (is.null(spectrum[[key]])) level else {
+                    sum_sound_levels(spectrum[[key]], level, coherent = FALSE)
+                  }
                 }
               }, template$pitch + pitch, template$level)
             }
@@ -346,14 +351,15 @@ get_pure_tone_audibility <- function(pure_tone_audible_level, al_0 = 15) {
 get_complex_spectrum <- function(midi_pitch, pure_tone_audibility,
                                  template_num_harmonics,
                                  template_roll_off,
-                                 k_t) {
+                                 k_t,
+                                 min_midi = 0, max_midi = 120) {
   spectrum <- data.frame(midi_pitch = midi_pitch,
                          pure_tone_audibility = pure_tone_audibility)
   template <- get_harmonic_template(num_harmonics = template_num_harmonics,
                                     level = 1,
                                     roll_off = template_roll_off)
-  df <- data.frame(midi_pitch = seq(from = min(midi_pitch) - max(template$pitch),
-                                    to = max(midi_pitch)),
+  df <- data.frame(midi_pitch = seq(from = min_midi,
+                                    to = max_midi),
                    complex_tone_audibility = NA)
   df$complex_tone_audibility <- vapply(
     df$midi_pitch,
@@ -367,10 +373,6 @@ get_complex_spectrum <- function(midi_pitch, pure_tone_audibility,
   )
   df <- df[df$complex_tone_audibility > 0, ]
   df
-}
-
-get_audibility <- function() {
-
 }
 
 #' @param pure_tone_audibility Numeric vector of pure tone audibilities
@@ -433,4 +435,62 @@ get_tone_salience <- function(combined_audibility, k_s) {
   m <- m_prime ^ k_s
   (combined_audibility / a_max) *
     (m / m_prime)
+}
+
+#' Returns a numeric salience vector where each element describes the salience of a different chromatic pitch. The first element of this vector corresponds to the \code{min_midi} argument, and the last element corresponds to \code{max_midi}.
+setGeneric("get_expanded_salience_vector",
+           valueClass = "numeric",
+           function(x, min_midi, max_midi) {
+             standardGeneric("get_expanded_salience_vector")
+           })
+setMethod(
+  f = "get_expanded_salience_vector",
+  signature = "midi_spectrum",
+  definition = function(x, min_midi, max_midi) {
+    get_expanded_salience_vector(x@combined_spectrum,
+                                 min_midi, max_midi)
+  }
+)
+setMethod(
+  f = "get_expanded_salience_vector",
+  signature = "data.frame",
+  definition = function(x, min_midi, max_midi) {
+    n <- max_midi - min_midi + 1
+    vec <- numeric(n)
+    vec[x$midi_pitch - min_midi + 1] <- x$salience
+    names(vec) <- seq(from = min_midi, to = max_midi)
+    vec
+  }
+)
+
+#' @export
+get_pitch_commonality <- function(s1, s2, min_midi = 0, max_midi = 120) {
+  cor(get_expanded_salience_vector(s1, min_midi = min_midi, max_midi = max_midi),
+      get_expanded_salience_vector(s2, min_midi = min_midi, max_midi = max_midi))
+}
+
+#' @export
+get_pitch_distance <- function(spectrum_1, spectrum_2, min_midi = 0, max_midi = 120) {
+  s1 <- get_expanded_salience_vector(
+    spectrum_1, min_midi = min_midi, max_midi = max_midi
+  )
+  s2 <- get_expanded_salience_vector(
+    spectrum_2, min_midi = min_midi, max_midi = max_midi
+  )
+  # We define some matrices that will allow us to vectorise our calculation -
+  # see Equation 17 of Parncutt & Strasburger to see how this works.
+  # Element [i, j] of each matrix corresponds to one combination of P / P'
+  # in Equation 17.
+  dim <- length(s1)
+  m1 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+               nrow = dim, byrow = TRUE)
+  m2 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+               nrow = dim, byrow = FALSE)
+  dist <- abs(m1 - m2)
+  s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
+  s2_mat <- matrix(data = rep(s2, each = dim), nrow = dim, byrow = FALSE)
+
+  sum(s1_mat * s2_mat * dist) -
+    sqrt(sum(s1_mat * t(s1_mat) * dist) *
+           sum(t(s2_mat) * s2_mat * dist))
 }

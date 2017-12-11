@@ -5,7 +5,8 @@
 \title{Get MIDI spectrum}
 \usage{
 get_midi_spectrum(object, keep_inaudible = FALSE, level = 60,
-  num_harmonics = 10, roll_off = function(x) 1/(1 + x))
+  num_harmonics = 10, roll_off = function(x) 1/(1 + x), min_midi = 0,
+  max_midi = 120)
 }
 \description{
 MIDI spectra coerce harmonics to the nearest semitone.
