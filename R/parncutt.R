@@ -29,6 +29,7 @@ setClass("midi_spectrum",
 #' @param k_t
 #' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105)
 #' @param k_c Parncutt & Strasburger (1994) set this to 0.2 (p. 105)
+#' @param k_s Parncutt & Strasburger (1994) set this to 0.5 (p. 106)
 setMethod(
   f = "initialize",
   signature = "midi_spectrum",
@@ -40,7 +41,8 @@ setMethod(
                         template_roll_off = function(x) 1 / (1 + x),
                         k_t = 3,
                         k_p = 0.5,
-                        k_c = 0.2) {
+                        k_c = 0.2,
+                        k_s = 0.5) {
     assertthat::assert_that(
       length(midi_pitch) == length(level),
       !anyDuplicated(midi_pitch)
@@ -59,6 +61,13 @@ setMethod(
       template_roll_off = template_roll_off,
       k_t = k_t
     )
+    .Object@combined_spectrum <- get_combined_spectrum(
+      pure_midi_pitch = .Object@pure_spectrum$midi_pitch,
+      pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
+      complex_midi_pitch = .Object@complex_spectrum$midi_pitch,
+      complex_tone_audibility = .Object@complex_spectrum$complex_tone_audibility,
+      k_s = k_s
+    )
     .Object@pure_sonorousness <- get_pure_sonorousness(
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
       k_p = k_p
@@ -66,6 +75,10 @@ setMethod(
     .Object@complex_sonorousness <- get_complex_sonorousness(
       complex_tone_audibility = .Object@complex_spectrum$complex_tone_audibility,
       k_c = k_c
+    )
+    .Object@multiplicity <- get_multiplicity(
+      combined_audibility = .Object@combined_spectrum$combined_audibility,
+      k_s = k_s
     )
     return(.Object)
   }
@@ -351,6 +364,7 @@ get_complex_spectrum <- function(midi_pitch, pure_tone_audibility,
     }, numeric(1)
   )
   df <- df[df$complex_tone_audibility > 0, ]
+  df
 }
 
 get_audibility <- function() {
@@ -369,6 +383,52 @@ get_complex_sonorousness <- function(complex_tone_audibility, k_c) {
   k_c * max(complex_tone_audibility)
 }
 
-get_multiplicity <- function() {
+#' Represents Equations 14 and 15 from Parncutt & Strasburger (1994)
+#' @param combined_audibility Numeric vector of combined audibilities as derived in Equation 11 of Parncutt & Strasburger (1994)
+#' @return Numeric scalar corresponding to the multiplicity of the sonority
+get_multiplicity <- function(combined_audibility,
+                             k_s) {
+  a_max <- max(combined_audibility)
+  m_prime <- sum(combined_audibility) / a_max
+  m <- m_prime ^ k_s
+  m
+}
 
+#' Represents Equations 11 and 16 in Parncutt & Strasburger (1994)
+#' @param pure_midi_pitch Numeric vector of MIDI pitches for the pure spectrum
+#' @param pure_tone_audibility Numeric vector of audibilities for the pure spectrum
+#' @param pure_midi_pitch Numeric vector of MIDI pitches for the complex spectrum
+#' @param pure_tone_audibility Numeric vector of audibilities for the complex spectrum
+#' @return \code{data.frame} with columns \code{midi_pitch} and \code{combined_audibility}
+get_combined_spectrum <- function(pure_midi_pitch,
+                                  pure_tone_audibility,
+                                  complex_midi_pitch,
+                                  complex_tone_audibility,
+                                  k_s) {
+  df <- merge(
+    data.frame(midi_pitch = pure_midi_pitch,
+               pure_tone_audibility = pure_tone_audibility),
+    data.frame(midi_pitch = complex_midi_pitch,
+               complex_tone_audibility = complex_tone_audibility),
+    by = "midi_pitch",
+    all = TRUE
+  )
+  df$combined_audibility <- pmax(df$pure_tone_audibility,
+                                 df$complex_tone_audibility,
+                                 0, na.rm = TRUE)
+  df$salience <- get_tone_salience(
+    combined_audibility = df$combined_audibility,
+    k_s = k_s
+  )
+  df$pure_tone_audibility <- NULL
+  df$complex_tone_audibility <- NULL
+  df
+}
+
+get_tone_salience <- function(combined_audibility, k_s) {
+  a_max <- max(combined_audibility)
+  m_prime <- sum(combined_audibility) / a_max
+  m <- m_prime ^ k_s
+  (combined_audibility / a_max) *
+    (m / m_prime)
 }
