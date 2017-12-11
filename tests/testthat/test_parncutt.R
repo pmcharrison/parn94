@@ -50,5 +50,36 @@ test_that("overall_masking_level", {
   ), 0)
 })
 
+test_that("get_audible_level", {
+  expect_equal(
+    get_audible_level(auditory_level = 20, overall_masking_level = 10),
+    10
+  )
+  expect_equal(
+    get_audible_level(auditory_level = 30, overall_masking_level = 50),
+    0
+  )
+})
+
+test_that("get_audibility", {
+  expect_equal(
+    get_audibility(audible_level = 0),
+    0
+  )
+  expect_gt(
+    get_audibility(audible_level = 20),
+    0
+  )
+  expect_gt(
+    get_audibility(audible_level = 30),
+    get_audibility(audible_level = 20)
+  )
+})
+
+test_that("sum_sound_levels", {
+  expect_equal(sum_sound_levels(0, 0), 0)
+  expect_equal(sum_sound_levels(60, 60) %>% round, 63)
+})
+
 
 # In elementary acoustics, the intensity of a tone of level L is given by 10^(L/10) and the amplitude by 10^*(L/20) (relative to specified reference points).
