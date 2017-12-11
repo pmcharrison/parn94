@@ -92,13 +92,13 @@ get_pure_spectrum <- function(midi_pitch,
   order <- order(midi_pitch, decreasing = FALSE)
   df <- data.frame(midi_pitch = midi_pitch[order],
                    level = level[order])
-  df$kHz <- midi_to_freq(df$midi_pitch,
-                         stretched_octave = TRUE)
-  df$free_field_threshold <- free_field_threshold(kHz = df$kHz)
+  df$kHz <- convert_midi_to_freq(df$midi_pitch,
+                                 stretched_octave = TRUE)
+  df$free_field_threshold <- get_free_field_threshold(kHz = df$kHz)
   df$auditory_level <- pmax(df$level -
                               df$free_field_threshold, 0)
-  df$pure_tone_height <- pure_tone_height(kHz = df$kHz)
-  df$overall_masking_level <- overall_masking_level(
+  df$pure_tone_height <- get_pure_tone_height(kHz = df$kHz)
+  df$overall_masking_level <- get_overall_masking_level(
     auditory_level = df$auditory_level,
     pure_tone_height = df$pure_tone_height
   )
@@ -211,7 +211,7 @@ sum_sound_levels <- function(x, y, coherent = FALSE) {
 #' @param stretched_octave Logical scalar; whether or not to use a stretched octave
 #' @return Numeric vector of frequencies in kHz
 #' @export
-midi_to_freq <- function(midi, stretched_octave = TRUE) {
+convert_midi_to_freq <- function(midi, stretched_octave = TRUE) {
   0.44 * (2 ^ ((midi - 57) / if (stretched_octave) 11.9 else 12))
 }
 
@@ -221,7 +221,7 @@ midi_to_freq <- function(midi, stretched_octave = TRUE) {
 #' @param kHz Numeric vector of frequencies in kHz
 #' @return Numeric vector of corresponding free-field thresholds in dB SPL
 #' @export
-free_field_threshold <- function(kHz) {
+get_free_field_threshold <- function(kHz) {
   3.64 * (kHz ^ -0.8) -
     6.5 * exp(- 0.6 * (kHz - 3.3) ^ 2) +
     (10 ^ (-3)) * (kHz ^ 4)
@@ -234,7 +234,7 @@ free_field_threshold <- function(kHz) {
 #' #' @param kHz Numeric vector of frequencies in kHz
 #' @return Numeric vector of corresponding pure-tone heights, with units of equivalent rectangular bandwidths (ERBs)
 #' @export
-pure_tone_height <- function(kHz) {
+get_pure_tone_height <- function(kHz) {
   H1 <- 11.17
   H0 <- 43.0
   f1 <- 0.312
@@ -252,11 +252,11 @@ pure_tone_height <- function(kHz) {
 #' @param k_m Parameter \code{k_m} in Parncutt & Strasburger (1994); represents the masking pattern gradient for a pure tone, with units of dB per critical band. Parncutt & Strasburger use a value of 12 in their examples, but imply that 12-18 is a typical range of values for this parameter.
 #' @return  Matrix where element [i,j] gives the level of masking for masker j on maskee i.
 #' @export
-partial_masking_level <- function(masker_auditory_level,
-                                  masker_pure_tone_height,
-                                  maskee_auditory_level,
-                                  maskee_pure_tone_height,
-                                  k_m = 12) {
+get_partial_masking_level <- function(masker_auditory_level,
+                                      masker_pure_tone_height,
+                                      maskee_auditory_level,
+                                      maskee_pure_tone_height,
+                                      k_m = 12) {
   assertthat::assert_that(
     length(masker_auditory_level) == length(masker_pure_tone_height),
     length(maskee_auditory_level) == length(maskee_pure_tone_height)
@@ -296,8 +296,10 @@ partial_masking_level <- function(masker_auditory_level,
 #' @param pure_tone_height Numeric vector of pure tone heights
 #' @return Numeric vector of overall masking levels (dB)
 #' @export
-overall_masking_level <- function(auditory_level, pure_tone_height, k_m = 12) {
-  partial_mask_matrix <- partial_masking_level(
+get_overall_masking_level <- function(auditory_level,
+                                      pure_tone_height,
+                                      k_m = 12) {
+  partial_mask_matrix <- get_partial_masking_level(
     masker_auditory_level = auditory_level,
     masker_pure_tone_height = pure_tone_height,
     maskee_auditory_level = auditory_level,
