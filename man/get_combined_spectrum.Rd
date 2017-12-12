@@ -17,7 +17,7 @@ get_combined_spectrum(pure_midi_pitch, pure_tone_audibility, complex_midi_pitch,
 \item{pure_tone_audibility}{Numeric vector of audibilities for the complex spectrum}
 }
 \value{
-\code{data.frame} with columns \code{midi_pitch} and \code{combined_audibility}
+\code{data.frame} with columns \code{pitch_midi} and \code{combined_audibility}
 }
 \description{
 Represents Equations 11 and 16 in Parncutt & Strasburger (1994)
