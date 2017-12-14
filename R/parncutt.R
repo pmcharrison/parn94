@@ -149,32 +149,50 @@ setMethod(
 )
 
 #' @export
-get_pitch_distance <- function(sonority_analysis_1,
-                               sonority_analysis_2,
-                               min_midi = 0, max_midi = 120) {
-  s1 <- get_expanded_salience_vector(
-    sonority_analysis_1, min_midi = min_midi, max_midi = max_midi
-  )
-  s2 <- get_expanded_salience_vector(
-    sonority_analysis_2, min_midi = min_midi, max_midi = max_midi
-  )
-  # We define some matrices that will allow us to vectorise our calculation -
-  # see Equation 17 of Parncutt & Strasburger to see how this works.
-  # Element [i, j] of each matrix corresponds to one combination of P / P'
-  # in Equation 17.
-  dim <- length(s1)
-  m1 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
-               nrow = dim, byrow = TRUE)
-  m2 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
-               nrow = dim, byrow = FALSE)
-  dist <- abs(m1 - m2)
-  s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
-  s2_mat <- matrix(data = rep(s2, each = dim), nrow = dim, byrow = FALSE)
+setGeneric("get_pitch_distance",
+           valueClass = "numeric",
+           function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+             standardGeneric("get_pitch_distance")
+           })
+setMethod(
+  f = "get_pitch_distance",
+  signature = c("numeric", "numeric"),
+  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+    get_pitch_distance(
+      chord_1 = analyse_sonority(chord_1, min_midi = min_midi, max_midi = max_midi),
+      chord_2 = analyse_sonority(chord_2, min_midi = min_midi, max_midi = max_midi),
+      min_midi = min_midi, max_midi = max_midi
+    )
+  }
+)
+setMethod(
+  f = "get_pitch_distance",
+  signature = c("sonority_analysis", "sonority_analysis"),
+  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+    s1 <- get_expanded_salience_vector(
+      chord_1, min_midi = min_midi, max_midi = max_midi
+    )
+    s2 <- get_expanded_salience_vector(
+      chord_2, min_midi = min_midi, max_midi = max_midi
+    )
+    # We define some matrices that will allow us to vectorise our calculation -
+    # see Equation 17 of Parncutt & Strasburger to see how this works.
+    # Element [i, j] of each matrix corresponds to one combination of P / P'
+    # in Equation 17.
+    dim <- length(s1)
+    m1 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+                 nrow = dim, byrow = TRUE)
+    m2 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+                 nrow = dim, byrow = FALSE)
+    dist <- abs(m1 - m2)
+    s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
+    s2_mat <- matrix(data = rep(s2, each = dim), nrow = dim, byrow = FALSE)
 
-  sum(s1_mat * s2_mat * dist) -
-    sqrt(sum(s1_mat * t(s1_mat) * dist) *
-           sum(t(s2_mat) * s2_mat * dist))
-}
+    sum(s1_mat * s2_mat * dist) -
+      sqrt(sum(s1_mat * t(s1_mat) * dist) *
+             sum(t(s2_mat) * s2_mat * dist))
+  }
+)
 
 get_pure_spectrum <- function(pitch_midi,
                               level,
