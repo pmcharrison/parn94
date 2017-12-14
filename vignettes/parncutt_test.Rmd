@@ -1,58 +1,61 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Testing the pitch commonality algorithm"
+author: "Peter M. C. Harrison"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: bib.bib
+csl: apa.csl
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+library(ggplot2)
+library(HarmonyToolbox)
+library(magrittr)
+library(parallel)
 
-## Vignette Info
+data("bigand_1996")
+data("bigand_1996_reference_chord")
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+theme_set(theme_bw() +
+            theme(panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  strip.background = element_rect(fill = "white")))
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+This report compares this package's implementation of Parncutt's pitch commonality algorithm with the results reported in @Bigand1996.
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+## Method
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+@Bigand1996 provide tables of metadata for the chords they used in their experiment. These tables don't actually say what the precise pitches in the chords are, but it is possible to deduce these pitches from the provided metadata. These chords and their metadata can be found in the dataset `bigand_1996`. We can use this data to compare implementations of Parncutt's pitch commonality algorithm.
 
-## More Examples
+## Results
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+```{r, include = TRUE}
+df <- bigand_1996 %>%
+  (function(df) {
+    df$pitch_commonality_new <- mclapply(
+      df$pitches, function(pitches) {
+        analyse_pitch_commonality(
+          chord_1 = as.numeric(bigand_1996_reference_chord),
+          chord_2 = pitches
+        )
+      }
+    ) %>% as.numeric
+    df
+  })
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+ggplot(df, aes(x = pitch_commonality_new, y = pitch_commonality)) +
+  geom_point() +
+  scale_x_continuous("New implementation") +
+  scale_y_continuous("Bigand et al. (1996) implementation")
 ```
 
-Also a quote using `>`:
+The two sets of values are highly correlated (`r apa::apa(cor.test(df$pitch_commonality, df$pitch_commonality_new))`). The differences between the results are likely to be down to the slightly different methodologies underpinning the algorithms; @Bigand1996 use the algorithm from @Parncutt1989, whereas we use the algorithm from @Parncutt1994, which uses a slightly different similarity measure for the two pitch salience profiles.
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+## References
