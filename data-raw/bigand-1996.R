@@ -114,7 +114,7 @@ bigand_1996 <- read.csv("data-raw/bigand-1996-data.csv", stringsAsFactors = FALS
   })
 
 bigand_1996_reference_chord <- read.csv("data-raw/bigand-1996-reference-chord.csv",
-                                         stringsAsFactors = FALSE)
+                                         stringsAsFactors = FALSE) %>% as.list
 
 bigand_1996$root_pc <- bigand_1996$bass_interval_size # because all chords were root position
 bigand_1996$pc_set <- mapply(function(root_pc, chord_type) {
@@ -141,4 +141,5 @@ bigand_1996$pitches <- mapply(
   SIMPLIFY = FALSE
 ) %>% I
 
-devtools::use_data(bigand_1996)
+devtools::use_data(bigand_1996, overwrite = TRUE)
+devtools::use_data(bigand_1996_reference_chord, overwrite = TRUE)
