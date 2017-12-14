@@ -88,15 +88,9 @@ test_that("get_expanded_salience_vector", {
   )
 })
 
-test_that("analyse_pitch_distance", {
+test_that("get_pitch_distance", {
   expect_equal(
-    analyse_pitch_distance(get_midi_spectrum(new("pitch_set", c(60, 64, 67))),
-                       get_midi_spectrum(new("pitch_set", c(60, 64, 67)))),
+    get_pitch_distance(c(60, 64, 67), c(60, 64, 67)),
     0
-  )
-  expect_equal(
-    analyse_pitch_distance(spectrum_1 = data.frame(pitch_midi = 10, salience = 1),
-                       spectrum_2 = data.frame(pitch_midi = 20, salience = 1)),
-    10
   )
 })
