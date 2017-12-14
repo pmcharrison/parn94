@@ -149,7 +149,7 @@ setMethod(
 )
 
 #' @export
-analyse_pitch_distance <- function(sonority_analysis_1,
+get_pitch_distance <- function(sonority_analysis_1,
                                    sonority_analysis_2,
                                    min_midi = 0, max_midi = 120) {
   s1 <- get_expanded_salience_vector(
