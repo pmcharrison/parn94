@@ -22,6 +22,7 @@ setClass("sonority_analysis",
 #' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105)
 #' @param k_c Parncutt & Strasburger (1994) set this to 0.2 (p. 105)
 #' @param k_s Parncutt & Strasburger (1994) set this to 0.5 (p. 106)
+#' @return A \code{sonority_analysis} object containing slots describing various aspects of the analysed sonority, including \code{pure_spectrum}, \code{complex_spectrum}, \code{combined_spectrum}, \code{pure_sonorousness}, \code{complex_sonorousness}, and \code{multiplicity}. These features can be accessed using `@`, e.g. `analysis@multiplicity`.
 setMethod(
   f = "initialize",
   signature = "sonority_analysis",
@@ -353,7 +354,7 @@ get_free_field_threshold <- function(kHz) {
 #'
 #' Returns the pure-tone heights (a.k.a. critical-band rates) of pure tones of given frequencies.
 #' Equation 3 in Parncutt & Strasburger (1994).
-#'  @param kHz Numeric vector of frequencies in kHz
+#' @param kHz Numeric vector of frequencies in kHz
 #' @return Numeric vector of corresponding pure-tone heights, with units of equivalent rectangular bandwidths (ERBs)
 #' @export
 get_pure_tone_height <- function(kHz) {

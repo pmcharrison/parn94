@@ -19,6 +19,9 @@
 
 \item{k_s}{Parncutt & Strasburger (1994) set this to 0.5 (p. 106)}
 }
+\value{
+A \code{sonority_analysis} object containing slots describing various aspects of the analysed sonority, including \code{pure_spectrum}, \code{complex_spectrum}, \code{combined_spectrum}, \code{pure_sonorousness}, \code{complex_sonorousness}, and \code{multiplicity}. These features can be accessed using `@`, e.g. `analysis@multiplicity`.
+}
 \description{
 Make new sonority analysis object
 }
