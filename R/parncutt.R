@@ -6,92 +6,6 @@
 #' @importFrom magrittr "%>%"
 NULL
 
-analyse_sonority <- function(pitch_midi,
-                             level_dB = 60,
-                             expand_harmonics = TRUE,
-                             num_harmonics = 11,
-                             harmonic_roll_off = function(x) 1 / (1 + x),
-                             k_t = 3,
-                             k_p = 0.5,
-                             k_c = 0.2,
-                             k_s = 0.5,
-                             min_midi = 0, max_midi = 120) {
-  assertthat::assert_that(
-    is.numeric(pitch_midi),
-    is.numeric(level_dB),
-    is.numeric(num_harmonics), assertthat::is.scalar(num_harmonics),
-    is.function(harmonic_roll_off),
-    is.numeric(k_t), assertthat::is.scalar(k_t),
-    is.numeric(k_p), assertthat::is.scalar(k_p),
-    is.numeric(k_c), assertthat::is.scalar(k_c),
-    is.numeric(k_s), assertthat::is.scalar(k_s),
-    length(level_dB) == 1 || length(level_dB) == length(pitch_midi)
-  )
-  # Expand level_dB if only one value was provided
-  level_dB <- if (length(level_dB) == 1) {
-    rep(level_dB, times = length(pitch_midi))
-  } else level_dB
-  # Expand harmonics if requested
-  if (expand_harmonics) {
-    tmp <- expand_harmonics(pitch_midi = pitch_midi,
-                            level = level_dB,
-                            num_harmonics = num_harmonics,
-                            roll_off = roll_off,
-                            min_midi = 0, max_midi = 120)
-    pitch_midi <- tmp$pitch_midi
-    level_dB <- tmp$level
-  }
-  # Compute the analysis
-  new("sonority_analysis",
-      pitch_midi = pitch_midi,
-      level = level_dB,
-      template_num_harmonics = num_harmonics,
-      template_roll_off = harmonic_roll_off,
-      k_t = k_t,
-      k_p = k_p,
-      k_c = k_c,
-      k_s = k_s,
-      min_midi = min_midi, max_midi = max_midi)
-}
-
-#' @export
-analyse_pitch_commonality <- function(sonority_analysis_1,
-                                      sonority_analysis_2,
-                                      min_midi = 0, max_midi = 120) {
-  cor(get_expanded_salience_vector(sonority_analysis_1,
-                                   min_midi = min_midi, max_midi = max_midi),
-      get_expanded_salience_vector(sonority_analysis_2,
-                                   min_midi = min_midi, max_midi = max_midi))
-}
-
-#' @export
-analyse_pitch_distance <- function(sonority_analysis_1,
-                                   sonority_analysis_2,
-                                   min_midi = 0, max_midi = 120) {
-  s1 <- get_expanded_salience_vector(
-    sonority_analysis_1, min_midi = min_midi, max_midi = max_midi
-  )
-  s2 <- get_expanded_salience_vector(
-    sonority_analysis_2, min_midi = min_midi, max_midi = max_midi
-  )
-  # We define some matrices that will allow us to vectorise our calculation -
-  # see Equation 17 of Parncutt & Strasburger to see how this works.
-  # Element [i, j] of each matrix corresponds to one combination of P / P'
-  # in Equation 17.
-  dim <- length(s1)
-  m1 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
-               nrow = dim, byrow = TRUE)
-  m2 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
-               nrow = dim, byrow = FALSE)
-  dist <- abs(m1 - m2)
-  s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
-  s2_mat <- matrix(data = rep(s2, each = dim), nrow = dim, byrow = FALSE)
-
-  sum(s1_mat * s2_mat * dist) -
-    sqrt(sum(s1_mat * t(s1_mat) * dist) *
-           sum(t(s2_mat) * s2_mat * dist))
-}
-
 setClass("sonority_analysis",
          slots = list(
            pure_spectrum = "data.frame",
@@ -158,6 +72,109 @@ setMethod(
     return(.Object)
   }
 )
+
+analyse_sonority <- function(pitch_midi,
+                             level_dB = 60,
+                             expand_harmonics = TRUE,
+                             num_harmonics = 11,
+                             harmonic_roll_off = function(x) 1 / (1 + x),
+                             k_t = 3,
+                             k_p = 0.5,
+                             k_c = 0.2,
+                             k_s = 0.5,
+                             min_midi = 0, max_midi = 120) {
+  assertthat::assert_that(
+    is.numeric(pitch_midi),
+    is.numeric(level_dB),
+    is.numeric(num_harmonics), assertthat::is.scalar(num_harmonics),
+    is.function(harmonic_roll_off),
+    is.numeric(k_t), assertthat::is.scalar(k_t),
+    is.numeric(k_p), assertthat::is.scalar(k_p),
+    is.numeric(k_c), assertthat::is.scalar(k_c),
+    is.numeric(k_s), assertthat::is.scalar(k_s),
+    length(level_dB) == 1 || length(level_dB) == length(pitch_midi)
+  )
+  # Expand level_dB if only one value was provided
+  level_dB <- if (length(level_dB) == 1) {
+    rep(level_dB, times = length(pitch_midi))
+  } else level_dB
+  # Expand harmonics if requested
+  if (expand_harmonics) {
+    tmp <- expand_harmonics(pitch_midi = pitch_midi,
+                            level = level_dB,
+                            num_harmonics = num_harmonics,
+                            roll_off = harmonic_roll_off,
+                            min_midi = 0, max_midi = 120)
+    pitch_midi <- tmp$pitch_midi
+    level_dB <- tmp$level
+  }
+  # Compute the analysis
+  new("sonority_analysis",
+      pitch_midi = pitch_midi,
+      level = level_dB,
+      template_num_harmonics = num_harmonics,
+      template_roll_off = harmonic_roll_off,
+      k_t = k_t,
+      k_p = k_p,
+      k_c = k_c,
+      k_s = k_s,
+      min_midi = min_midi, max_midi = max_midi)
+}
+
+#' @export
+setGeneric("analyse_pitch_commonality",
+           valueClass = "numeric",
+           function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+             standardGeneric("analyse_pitch_commonality")
+           })
+setMethod(
+  f = "analyse_pitch_commonality",
+  signature = c("sonority_analysis", "sonority_analysis"),
+  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+    cor(get_expanded_salience_vector(chord_1,
+                                     min_midi = min_midi, max_midi = max_midi),
+        get_expanded_salience_vector(chord_2,
+                                     min_midi = min_midi, max_midi = max_midi))
+  })
+setMethod(
+  f = "analyse_pitch_commonality",
+  signature = c("numeric", "numeric"),
+  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+    analyse_pitch_commonality(
+      chord_1 = analyse_sonority(chord_1, min_midi = min_midi, max_midi = max_midi),
+      chord_2 = analyse_sonority(chord_2, min_midi = min_midi, max_midi = max_midi),
+      min_midi = min_midi, max_midi = max_midi
+    )
+  }
+)
+
+#' @export
+analyse_pitch_distance <- function(sonority_analysis_1,
+                                   sonority_analysis_2,
+                                   min_midi = 0, max_midi = 120) {
+  s1 <- get_expanded_salience_vector(
+    sonority_analysis_1, min_midi = min_midi, max_midi = max_midi
+  )
+  s2 <- get_expanded_salience_vector(
+    sonority_analysis_2, min_midi = min_midi, max_midi = max_midi
+  )
+  # We define some matrices that will allow us to vectorise our calculation -
+  # see Equation 17 of Parncutt & Strasburger to see how this works.
+  # Element [i, j] of each matrix corresponds to one combination of P / P'
+  # in Equation 17.
+  dim <- length(s1)
+  m1 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+               nrow = dim, byrow = TRUE)
+  m2 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+               nrow = dim, byrow = FALSE)
+  dist <- abs(m1 - m2)
+  s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
+  s2_mat <- matrix(data = rep(s2, each = dim), nrow = dim, byrow = FALSE)
+
+  sum(s1_mat * s2_mat * dist) -
+    sqrt(sum(s1_mat * t(s1_mat) * dist) *
+           sum(t(s2_mat) * s2_mat * dist))
+}
 
 get_pure_spectrum <- function(pitch_midi,
                               level,
