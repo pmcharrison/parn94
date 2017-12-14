@@ -122,13 +122,13 @@ analyse_sonority <- function(pitch_midi,
 }
 
 #' @export
-setGeneric("analyse_pitch_commonality",
+setGeneric("get_pitch_commonality",
            valueClass = "numeric",
            function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
-             standardGeneric("analyse_pitch_commonality")
+             standardGeneric("get_pitch_commonality")
            })
 setMethod(
-  f = "analyse_pitch_commonality",
+  f = "get_pitch_commonality",
   signature = c("sonority_analysis", "sonority_analysis"),
   definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
     cor(get_expanded_salience_vector(chord_1,
@@ -137,10 +137,10 @@ setMethod(
                                      min_midi = min_midi, max_midi = max_midi))
   })
 setMethod(
-  f = "analyse_pitch_commonality",
+  f = "get_pitch_commonality",
   signature = c("numeric", "numeric"),
   definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
-    analyse_pitch_commonality(
+    get_pitch_commonality(
       chord_1 = analyse_sonority(chord_1, min_midi = min_midi, max_midi = max_midi),
       chord_2 = analyse_sonority(chord_2, min_midi = min_midi, max_midi = max_midi),
       min_midi = min_midi, max_midi = max_midi

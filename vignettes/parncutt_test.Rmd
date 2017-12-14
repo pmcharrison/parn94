@@ -41,7 +41,7 @@ df <- bigand_1996 %>%
   (function(df) {
     df$pitch_commonality_new <- mclapply(
       df$pitches, function(pitches) {
-        analyse_pitch_commonality(
+        get_pitch_commonality(
           chord_1 = as.numeric(bigand_1996_reference_chord),
           chord_2 = pitches
         )
