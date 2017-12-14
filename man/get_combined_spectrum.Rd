@@ -2,7 +2,7 @@
 % Please edit documentation in R/parncutt.R
 \name{get_combined_spectrum}
 \alias{get_combined_spectrum}
-\title{Represents Equations 11 and 16 in Parncutt & Strasburger (1994)}
+\title{Get combined spectrum}
 \usage{
 get_combined_spectrum(pure_midi_pitch, pure_tone_audibility, complex_midi_pitch,
   complex_tone_audibility, k_s)
@@ -12,6 +12,8 @@ get_combined_spectrum(pure_midi_pitch, pure_tone_audibility, complex_midi_pitch,
 
 \item{pure_tone_audibility}{Numeric vector of audibilities for the pure spectrum}
 
+\item{k_s}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
+
 \item{pure_midi_pitch}{Numeric vector of MIDI pitches for the complex spectrum}
 
 \item{pure_tone_audibility}{Numeric vector of audibilities for the complex spectrum}
@@ -20,5 +22,5 @@ get_combined_spectrum(pure_midi_pitch, pure_tone_audibility, complex_midi_pitch,
 \code{data.frame} with columns \code{pitch_midi} and \code{combined_audibility}
 }
 \description{
-Represents Equations 11 and 16 in Parncutt & Strasburger (1994)
+Gets the combined spectrum for a sound from its pure and complex audibilities. Represents Equations 11 and 16 in Parncutt & Strasburger (1994)
 }

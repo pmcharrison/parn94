@@ -2,16 +2,19 @@
 % Please edit documentation in R/parncutt.R
 \name{get_multiplicity}
 \alias{get_multiplicity}
-\title{Represents Equations 14 and 15 from Parncutt & Strasburger (1994)}
+\title{Get multiplicity}
 \usage{
 get_multiplicity(combined_audibility, k_s)
 }
 \arguments{
 \item{combined_audibility}{Numeric vector of combined audibilities as derived in Equation 11 of Parncutt & Strasburger (1994)}
+
+\item{k_s}{Numeric scalar, parameter from Parncutt & Strasburger (1994)}
 }
 \value{
 Numeric scalar corresponding to the multiplicity of the sonority
 }
 \description{
+Gets the multiplicity of a sound from its combined (pure and complex) audibilities.
 Represents Equations 14 and 15 from Parncutt & Strasburger (1994)
 }

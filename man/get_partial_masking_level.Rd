@@ -8,9 +8,11 @@ get_partial_masking_level(masker_auditory_level, masker_pure_tone_height,
   maskee_auditory_level, maskee_pure_tone_height, k_m = 12)
 }
 \arguments{
-\item{masker_auditory_level}{Vector?}
+\item{masker_auditory_level}{Numeric vector of masker auditory levels}
 
-\item{maskee_pure_tone_height}{Vector?}
+\item{masker_pure_tone_height}{Numeric vector of masker pure tone heights}
+
+\item{maskee_pure_tone_height}{Numeric vector of maskee pure tone heights}
 
 \item{k_m}{Parameter \code{k_m} in Parncutt & Strasburger (1994); represents the masking pattern gradient for a pure tone, with units of dB per critical band. Parncutt & Strasburger use a value of 12 in their examples, but imply that 12-18 is a typical range of values for this parameter.}
 }

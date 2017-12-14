@@ -2,7 +2,7 @@
 % Please edit documentation in R/parncutt.R
 \name{get_expanded_salience_vector}
 \alias{get_expanded_salience_vector}
-\title{Returns a numeric salience vector where each element describes the salience of a different chromatic pitch. The first element of this vector corresponds to the \code{min_midi} argument, and the last element corresponds to \code{max_midi}.}
+\title{Get expanded salience vector}
 \usage{
 get_expanded_salience_vector(x, min_midi, max_midi)
 }

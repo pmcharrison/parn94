@@ -11,6 +11,9 @@ get_pure_tone_audibility(pure_tone_audible_level, al_0 = 15)
 
 \item{audible_level}{Numeric vector of audible levels (dB)}
 }
+\value{
+Numeric vector of pure tone audibilities
+}
 \description{
 Returns the audibility of a set of pure tone components as a function of their audible levels. Corresponds to Equation 7 of Parncutt & Strasburger (1994).
 }

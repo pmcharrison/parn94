@@ -12,5 +12,5 @@ Numeric vector of corresponding pure-tone heights, with units of equivalent rect
 \description{
 Returns the pure-tone heights (a.k.a. critical-band rates) of pure tones of given frequencies.
 Equation 3 in Parncutt & Strasburger (1994).
-#' @param kHz Numeric vector of frequencies in kHz
+ @param kHz Numeric vector of frequencies in kHz
 }

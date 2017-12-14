@@ -14,7 +14,11 @@ setClass("sonority_analysis",
            pure_sonorousness = "numeric",
            complex_sonorousness = "numeric",
            multiplicity = "numeric"))
-#' @param k_t
+
+#' Make new sonority analysis object
+#'
+#' Make new sonority analysis object
+#' @param k_t Parncutt & Strasburger (1994) set this to 3 (p. 104)
 #' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105)
 #' @param k_c Parncutt & Strasburger (1994) set this to 0.2 (p. 105)
 #' @param k_s Parncutt & Strasburger (1994) set this to 0.5 (p. 106)
@@ -73,6 +77,22 @@ setMethod(
   }
 )
 
+
+#' Analyse sonority
+#'
+#' Analyse a sonority using Parncutt's psychoacoustic models.
+#' @param pitch_midi Numeric vector of MIDI pitches in the sonority
+#' @param level_dB Numeric vector of sound levels (dB) for these pitches; must either be length 1 or of the same length as \code{pitch_midi}
+#' @param expand_harmonics Boolean scalar; whether or not to expand these pitches to include their implied harmonics
+#' @param num_harmonics Numeric scalar; if \code{expand_harmonics} is \code{TRUE}, this determines how many harmonics are provided for each pitch, including the fundamental
+#' @param harmonic_roll_off Function describing the roll off in sound levels as a function of harmonic number
+#' @param k_t Numeric scalar; parameter from Parncutt & Strasburger (1994)
+#' @param k_p Numeric scalar; parameter from Parncutt & Strasburger (1994)
+#' @param k_c Numeric scalar; parameter from Parncutt & Strasburger (1994)
+#' @param k_s Numeric scalar; parameter from Parncutt & Strasburger (1994)
+#' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
+#' @param max_midi Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model
+#' @export
 analyse_sonority <- function(pitch_midi,
                              level_dB = 60,
                              expand_harmonics = TRUE,
@@ -121,6 +141,13 @@ analyse_sonority <- function(pitch_midi,
       min_midi = min_midi, max_midi = max_midi)
 }
 
+
+#' Get pitch commonality
+#'
+#' Gets the pitch commonality between two chords.
+#' @param chord_1 The first chord to compare
+#' @param chord_2 The second chord to compare
+#' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
 #' @export
 setGeneric("get_pitch_commonality",
            valueClass = "numeric",
@@ -148,6 +175,12 @@ setMethod(
   }
 )
 
+#' Get pitch distance
+#'
+#' Gets the pitch distance between two chords.
+#' @param chord_1 The first chord to compare
+#' @param chord_2 The second chord to compare
+#' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
 #' @export
 setGeneric("get_pitch_distance",
            valueClass = "numeric",
@@ -264,10 +297,12 @@ expand_harmonics <- function(pitch_midi, level,
   spectrum
 }
 
+#' Get harmonic template
+#'
+#' Gets a harmonic template.
 #' @param num_harmonics Number of harmonics (including fundamental)
 #' @param level Level of the fundamental frequency
 #' @param roll_off Function determining the level of the nth harmonic. Default value corresponds to Equation 9 of Parncutt and Strasburger (1994)
-#' @export
 get_harmonic_template <- function(num_harmonics,
                                   level,
                                   roll_off = function(x) 1 / (1 + x)) {
@@ -280,7 +315,6 @@ get_harmonic_template <- function(num_harmonics,
 #' Sums pairs of sound levels assuming either coherent or incoherent (default) wave superposition
 #' @param x The first sound level to be summed in dB (can be vectorised)
 #' @param y The second sound level to be summed in dB (can be vectorised)
-#' @export
 sum_sound_levels <- function(x, y, coherent = FALSE) {
   assertthat::assert_that(
     length(x) == length(y)
@@ -319,7 +353,7 @@ get_free_field_threshold <- function(kHz) {
 #'
 #' Returns the pure-tone heights (a.k.a. critical-band rates) of pure tones of given frequencies.
 #' Equation 3 in Parncutt & Strasburger (1994).
-#' #' @param kHz Numeric vector of frequencies in kHz
+#'  @param kHz Numeric vector of frequencies in kHz
 #' @return Numeric vector of corresponding pure-tone heights, with units of equivalent rectangular bandwidths (ERBs)
 #' @export
 get_pure_tone_height <- function(kHz) {
@@ -334,9 +368,9 @@ get_pure_tone_height <- function(kHz) {
 #'
 #' Returns the effective reduction in dB of the audible level of a masked pure tone (maskee) on account of a masking pure tone (masker).
 #' Equation 4 in Parncutt & Strasburger (1994).
-#' @param masker_auditory_level Vector?
-#' @param masker_pure_tone_height
-#' @param maskee_pure_tone_height Vector?
+#' @param masker_auditory_level Numeric vector of masker auditory levels
+#' @param masker_pure_tone_height Numeric vector of masker pure tone heights
+#' @param maskee_pure_tone_height Numeric vector of maskee pure tone heights
 #' @param k_m Parameter \code{k_m} in Parncutt & Strasburger (1994); represents the masking pattern gradient for a pure tone, with units of dB per critical band. Parncutt & Strasburger use a value of 12 in their examples, but imply that 12-18 is a typical range of values for this parameter.
 #' @return  Matrix where element [i,j] gives the level of masking for masker j on maskee i.
 #' @export
@@ -425,12 +459,23 @@ get_pure_tone_audible_level <- function(auditory_level, overall_masking_level) {
 #' Returns the audibility of a set of pure tone components as a function of their audible levels. Corresponds to Equation 7 of Parncutt & Strasburger (1994).
 #' @param audible_level Numeric vector of audible levels (dB)
 #' @param al_0 constant (see Equation 7 of Parncutt & Strasburger (1994).)
+#' @return Numeric vector of pure tone audibilities
 #' @export
 get_pure_tone_audibility <- function(pure_tone_audible_level, al_0 = 15) {
   1 - exp(- pure_tone_audible_level / al_0)
 }
 
+
+#' Get complex spectrum
+#'
+#' Gets a complex spectrum from a pure spectrum using a pattern-matching algorithm.
+#' @param pitch_midi Numeric vector of pure tone MIDI pitches
+#' @param pure_tone_audibility Corresponding numeric vector of pure tone audibilities
+#' @param template_num_harmonics The number of harmonics to use in the template
+#' @param template_roll_off Function to use to compute the level of the nth harmonic in the harmonic template
 #' @param k_t corresponds to parameter \eqn{k_t} in Equation 10 of Parncutt & Strasburger (1994)
+#' @param min_midi Minimum MIDI pitch considered in the auditory model
+#' @param max_midi Maximum MIDI pitch considered in the auditory model
 get_complex_spectrum <- function(pitch_midi, pure_tone_audibility,
                                  template_num_harmonics,
                                  template_roll_off,
@@ -458,22 +503,34 @@ get_complex_spectrum <- function(pitch_midi, pure_tone_audibility,
   df
 }
 
+#' Get pure sonorousness
+#'
+#' Computes the pure sonorousness of a sound from its pure tone audibilities.
 #' @param pure_tone_audibility Numeric vector of pure tone audibilities
 #' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105)
+#' @return Pure sonorousness, a numeric scalar
 #' @export
 get_pure_sonorousness <- function(pure_tone_audibility, k_p) {
   k_p * sqrt(sum(pure_tone_audibility ^ 2))
 }
 
+#' Get complex sonorousness
+#'
+#' Computes the complex sonorousness of a sound from its complex tone audibilities.
 #' @param complex_tone_audibility Numeric vector of complex tone audibilities
 #' @param k_c Parncutt & Strasburger (1994) set this to 0.2 (p. 105)
+#' @return Complex sonorousness, a numeric scalar
 #' @export
 get_complex_sonorousness <- function(complex_tone_audibility, k_c) {
   k_c * max(complex_tone_audibility)
 }
 
+#' Get multiplicity
+#'
+#' Gets the multiplicity of a sound from its combined (pure and complex) audibilities.
 #' Represents Equations 14 and 15 from Parncutt & Strasburger (1994)
 #' @param combined_audibility Numeric vector of combined audibilities as derived in Equation 11 of Parncutt & Strasburger (1994)
+#' @param k_s Numeric scalar, parameter from Parncutt & Strasburger (1994)
 #' @return Numeric scalar corresponding to the multiplicity of the sonority
 #' @export
 get_multiplicity <- function(combined_audibility,
@@ -484,11 +541,14 @@ get_multiplicity <- function(combined_audibility,
   m
 }
 
-#' Represents Equations 11 and 16 in Parncutt & Strasburger (1994)
+#' Get combined spectrum
+#'
+#' Gets the combined spectrum for a sound from its pure and complex audibilities. Represents Equations 11 and 16 in Parncutt & Strasburger (1994)
 #' @param pure_midi_pitch Numeric vector of MIDI pitches for the pure spectrum
 #' @param pure_tone_audibility Numeric vector of audibilities for the pure spectrum
 #' @param pure_midi_pitch Numeric vector of MIDI pitches for the complex spectrum
 #' @param pure_tone_audibility Numeric vector of audibilities for the complex spectrum
+#' @param k_s Numeric scalar; parameter from Parncutt & Strasburger (1994)
 #' @return \code{data.frame} with columns \code{pitch_midi} and \code{combined_audibility}
 #' @export
 get_combined_spectrum <- function(pure_midi_pitch,
@@ -516,6 +576,12 @@ get_combined_spectrum <- function(pure_midi_pitch,
   df
 }
 
+#' Get tone salience
+#'
+#' Gets the salience of different tones within a sonority with reference to the combined (complex and pure) spectrum. Salience can be interpreted as the probability of consciously perceiving a given pitch.
+#' @param combined_audibility Numeric vector corresponding to the audibilities of each tone in the combined (pure and complex) spectrum
+#' @param k_s Numeric scalar; Parncutt & Strasburger (1994) set this to 0.5
+#' @return Numeric vector of saliences of the same length as \code{combined_audibility}, giving the salience of each respective tone.
 #' @export
 get_tone_salience <- function(combined_audibility, k_s) {
   a_max <- max(combined_audibility)
@@ -525,6 +591,9 @@ get_tone_salience <- function(combined_audibility, k_s) {
     (m / m_prime)
 }
 
+
+#' Get expanded salience vector
+#'
 #' Returns a numeric salience vector where each element describes the salience of a different chromatic pitch. The first element of this vector corresponds to the \code{min_midi} argument, and the last element corresponds to \code{max_midi}.
 setGeneric("get_expanded_salience_vector",
            valueClass = "numeric",
