@@ -1,8 +1,8 @@
-Package: HarmonyToolbox
-Title: Tools for analysing musical harmony
+Package: HarmonyParncutt
+Title: Implementation of Richard Parncutt's Psychoacoustic Harmony Algorithms
 Version: 0.0.0.9000
 Authors@R: person("Peter", "Harrison", email = "p.m.c.harrison@qmul.ac.uk", role = c("aut", "cre"))
-Description: Provides a set of tools for analysing musical harmony.
+Description: This package presents an implementation of Richard Parncutt's psychoacoustic harmony analysis algorithms, as described in Parncutt & Strasburger (1994).
 Depends: R (>= 3.4.2)
 License: GPL-3
 Encoding: UTF-8
@@ -14,6 +14,5 @@ RoxygenNote: 6.0.1
 Imports: methods,
     assertthat,
     ggplot2,
-    parallel,
-    apa
+    parallel
 VignetteBuilder: knitr
