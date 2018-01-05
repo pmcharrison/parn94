@@ -121,6 +121,14 @@ analyse_sonority <- function(pitch_midi,
     length(level_dB) == 1 || length(level_dB) == length(pitch_midi)
   )
   # Expand level_dB if only one value was provided
+  message(
+    "The analysis currently uses a 1/n roll-off in the dB domain, which seems unrealistic. ",
+    "We should change this to a 1/n roll-off in the amplitude domain. ",
+    "In this context, Parncutt's 1/n roll-off for the audibility template seems wrong, ",
+    "because amplitude and audibility have a non-linear relationship. ",
+    "I think it would be best to empirically estimate a new template ",
+    "by repeatedly sampling from the model at different pitches. "
+  )
   level_dB <- if (length(level_dB) == 1) {
     rep(level_dB, times = length(pitch_midi))
   } else level_dB
