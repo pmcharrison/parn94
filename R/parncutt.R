@@ -32,6 +32,7 @@ setMethod(
                         keep_inaudible = FALSE,
                         template_num_harmonics = 11, # including fundamental
                         template_roll_off = function(x) 1 / (1 + x),
+                        stretched_octave = TRUE,
                         k_t = 3,
                         k_p = 0.5,
                         k_c = 0.2,
@@ -46,7 +47,8 @@ setMethod(
       level = level,
       keep_inaudible = keep_inaudible,
       template_num_harmonics = template_num_harmonics,
-      template_roll_off = template_roll_off
+      template_roll_off = template_roll_off,
+      stretched_octave = stretched_octave
     )
     .Object@complex_spectrum <- get_complex_spectrum(
       pitch_midi = .Object@pure_spectrum$pitch_midi,
@@ -87,6 +89,7 @@ setMethod(
 #' @param expand_harmonics Boolean scalar; whether or not to expand these pitches to include their implied harmonics
 #' @param num_harmonics Numeric scalar; if \code{expand_harmonics} is \code{TRUE}, this determines how many harmonics are provided for each pitch, including the fundamental
 #' @param harmonic_roll_off Function describing the roll off in sound levels as a function of harmonic number
+#' @param stretched_octave Logical scalar; whether or not to use stretched octaves, default from Parncutt & Strasburger (1994) is \code{TRUE}
 #' @param k_t Numeric scalar; parameter from Parncutt & Strasburger (1994)
 #' @param k_p Numeric scalar; parameter from Parncutt & Strasburger (1994)
 #' @param k_c Numeric scalar; parameter from Parncutt & Strasburger (1994)
@@ -99,6 +102,7 @@ analyse_sonority <- function(pitch_midi,
                              expand_harmonics = TRUE,
                              num_harmonics = 11,
                              harmonic_roll_off = function(x) 1 / (1 + x),
+                             stretched_octave = TRUE,
                              k_t = 3,
                              k_p = 0.5,
                              k_c = 0.2,
@@ -109,6 +113,7 @@ analyse_sonority <- function(pitch_midi,
     is.numeric(level_dB),
     is.numeric(num_harmonics), assertthat::is.scalar(num_harmonics),
     is.function(harmonic_roll_off),
+    is.logical(stretched_octave), assertthat::is.scalar(stretched_octave),
     is.numeric(k_t), assertthat::is.scalar(k_t),
     is.numeric(k_p), assertthat::is.scalar(k_p),
     is.numeric(k_c), assertthat::is.scalar(k_c),
@@ -135,6 +140,7 @@ analyse_sonority <- function(pitch_midi,
       level = level_dB,
       template_num_harmonics = num_harmonics,
       template_roll_off = harmonic_roll_off,
+      stretched_octave = stretched_octave,
       k_t = k_t,
       k_p = k_p,
       k_c = k_c,
@@ -232,12 +238,13 @@ get_pure_spectrum <- function(pitch_midi,
                               level,
                               keep_inaudible,
                               template_num_harmonics,
-                              template_roll_off) {
+                              template_roll_off,
+                              stretched_octave) {
   order <- order(pitch_midi, decreasing = FALSE)
   df <- data.frame(pitch_midi = pitch_midi[order],
                    level = level[order])
   df$kHz <- convert_midi_to_freq(df$pitch_midi,
-                                 stretched_octave = TRUE)
+                                 stretched_octave = stretched_octave)
   df$free_field_threshold <- get_free_field_threshold(kHz = df$kHz)
   df$auditory_level <- pmax(df$level -
                               df$free_field_threshold, 0)
