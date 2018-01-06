@@ -244,12 +244,14 @@ setMethod(
   }
 )
 
-get_pure_spectrum <- function(pitch_midi,
-                              level,
-                              keep_inaudible,
-                              template_num_harmonics,
-                              template_roll_off,
-                              stretched_octave) {
+get_pure_spectrum <- function(
+  pitch_midi,
+  level,
+  keep_inaudible,
+  template_num_harmonics,
+  template_roll_off,
+  stretched_octave
+) {
   order <- order(pitch_midi, decreasing = FALSE)
   df <- data.frame(pitch_midi = pitch_midi[order],
                    level = level[order])
