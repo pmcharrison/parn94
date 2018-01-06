@@ -166,26 +166,26 @@ analyse_sonority <- function(
 #' @export
 setGeneric("get_pitch_commonality",
            valueClass = "numeric",
-           function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+           function(chord_1, chord_2, params = get_parncutt_params()) {
              standardGeneric("get_pitch_commonality")
            })
 setMethod(
   f = "get_pitch_commonality",
   signature = c("sonority_analysis", "sonority_analysis"),
-  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
-    cor(get_expanded_salience_vector(chord_1,
-                                     min_midi = min_midi, max_midi = max_midi),
-        get_expanded_salience_vector(chord_2,
-                                     min_midi = min_midi, max_midi = max_midi))
+  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
+    cor(
+      get_expanded_salience_vector(chord_1, min_midi = params$min_midi, max_midi = params$max_midi),
+      get_expanded_salience_vector(chord_2, min_midi = params$min_midi, max_midi = params$max_midi)
+    )
   })
 setMethod(
   f = "get_pitch_commonality",
   signature = c("numeric", "numeric"),
-  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
     get_pitch_commonality(
-      chord_1 = analyse_sonority(chord_1, min_midi = min_midi, max_midi = max_midi),
-      chord_2 = analyse_sonority(chord_2, min_midi = min_midi, max_midi = max_midi),
-      min_midi = min_midi, max_midi = max_midi
+      chord_1 = analyse_sonority(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
+      chord_2 = analyse_sonority(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
+      params = get_parncutt_params()
     )
   }
 )
@@ -199,38 +199,38 @@ setMethod(
 #' @export
 setGeneric("get_pitch_distance",
            valueClass = "numeric",
-           function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+           function(chord_1, chord_2, params = get_parncutt_params()) {
              standardGeneric("get_pitch_distance")
            })
 setMethod(
   f = "get_pitch_distance",
   signature = c("numeric", "numeric"),
-  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
     get_pitch_distance(
-      chord_1 = analyse_sonority(chord_1, min_midi = min_midi, max_midi = max_midi),
-      chord_2 = analyse_sonority(chord_2, min_midi = min_midi, max_midi = max_midi),
-      min_midi = min_midi, max_midi = max_midi
+      chord_1 = analyse_sonority(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
+      chord_2 = analyse_sonority(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
+      params = get_parncutt_params()
     )
   }
 )
 setMethod(
   f = "get_pitch_distance",
   signature = c("sonority_analysis", "sonority_analysis"),
-  definition = function(chord_1, chord_2, min_midi = 0, max_midi = 120) {
+  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
     s1 <- get_expanded_salience_vector(
-      chord_1, min_midi = min_midi, max_midi = max_midi
+      chord_1, min_midi = params$min_midi, max_midi = params$max_midi
     )
     s2 <- get_expanded_salience_vector(
-      chord_2, min_midi = min_midi, max_midi = max_midi
+      chord_2, min_midi = params$min_midi, max_midi = params$max_midi
     )
     # We define some matrices that will allow us to vectorise our calculation -
     # see Equation 17 of Parncutt & Strasburger to see how this works.
     # Element [i, j] of each matrix corresponds to one combination of P / P'
     # in Equation 17.
     dim <- length(s1)
-    m1 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+    m1 <- matrix(data = rep(seq(from = params$min_midi, to = params$max_midi), each = dim),
                  nrow = dim, byrow = TRUE)
-    m2 <- matrix(data = rep(seq(from = min_midi, to = max_midi), each = dim),
+    m2 <- matrix(data = rep(seq(from = params$min_midi, to = params$max_midi), each = dim),
                  nrow = dim, byrow = FALSE)
     dist <- abs(m1 - m2)
     s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
