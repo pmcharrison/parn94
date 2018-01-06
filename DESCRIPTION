@@ -15,5 +15,5 @@ Imports: methods,
     assertthat,
     ggplot2,
     parallel,
-    HarmonyUtils (>= 0.2.0)
+    HarmonyUtils (>= 0.3.0)
 VignetteBuilder: knitr
