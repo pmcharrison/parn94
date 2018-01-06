@@ -128,7 +128,7 @@ analyse_sonority <- function(
   )
   # Expand harmonics if requested
   if (expand_harmonics) {
-    tmp <- expand_harmonics(
+    tmp <- expand_harmonics_midi(
       pitch_midi = pitch_midi,
       level = level_dB,
       num_harmonics = params$num_harmonics,
@@ -274,10 +274,13 @@ get_pure_spectrum <- function(pitch_midi,
   df
 }
 
-expand_harmonics <- function(pitch_midi, level,
-                             num_harmonics = 11, # including the fundamental
-                             roll_off = function(x) 1 / (1 + x),
-                             min_midi = 0, max_midi = 120) {
+expand_harmonics_midi <- function(
+  pitch_midi,
+  level,
+  num_harmonics = 11, # including the fundamental
+  roll_off = function(x) 1 / (1 + x),
+  min_midi = 0, max_midi = 120
+) {
   assertthat::assert_that(
     all.equal(round(pitch_midi), pitch_midi),
     length(level) == length(pitch_midi),
@@ -288,7 +291,7 @@ expand_harmonics <- function(pitch_midi, level,
     is.numeric(max_midi), assertthat::is.scalar(max_midi),
     round(max_midi) == max_midi
   )
-  template <- get_harmonic_template(
+  template <- get_harmonic_template_midi(
     num_harmonics = num_harmonics,
     level = 1, roll_off = roll_off
   )
@@ -319,9 +322,11 @@ expand_harmonics <- function(pitch_midi, level,
 #' @param num_harmonics Number of harmonics (including fundamental)
 #' @param level Level of the fundamental frequency
 #' @param roll_off Function determining the level of the nth harmonic. Default value corresponds to Equation 9 of Parncutt and Strasburger (1994)
-get_harmonic_template <- function(num_harmonics,
-                                  level,
-                                  roll_off = function(x) 1 / (1 + x)) {
+get_harmonic_template_midi <- function(
+  num_harmonics,
+  level,
+  roll_off = function(x) 1 / (1 + x)
+) {
   harmonic_numbers <- seq(from = 0, length.out = num_harmonics)
   template <- data.frame(pitch = round(12 * log(harmonic_numbers + 1, base = 2)),
                          level = level * do.call(roll_off, list(harmonic_numbers)))
@@ -499,9 +504,9 @@ get_complex_spectrum <- function(pitch_midi, pure_tone_audibility,
                                  min_midi = 0, max_midi = 120) {
   spectrum <- data.frame(pitch_midi = pitch_midi,
                          pure_tone_audibility = pure_tone_audibility)
-  template <- get_harmonic_template(num_harmonics = template_num_harmonics,
-                                    level = 1,
-                                    roll_off = template_roll_off)
+  template <- get_harmonic_template_midi(num_harmonics = template_num_harmonics,
+                                         level = 1,
+                                         roll_off = template_roll_off)
   df <- data.frame(pitch_midi = seq(from = min_midi,
                                     to = max_midi),
                    complex_tone_audibility = NA)
