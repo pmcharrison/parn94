@@ -6,6 +6,7 @@
 #' @importFrom magrittr "%>%"
 NULL
 
+#' @export
 setClass("sonority_analysis",
          slots = list(
            pure_spectrum = "data.frame",
@@ -99,30 +100,21 @@ setMethod(
 #' @export
 analyse_sonority <- function(
   pitch_midi,
-  level_dB = 60,
+  level_dB = NULL,
   expand_harmonics = TRUE,
-  num_harmonics = 11,
-  harmonic_roll_off = function(x) 1 / (1 + x),
-  stretched_octave = TRUE,
-  k_t = 3,
-  k_p = 0.5,
-  k_c = 0.2,
-  k_s = 0.5,
-  min_midi = 0, max_midi = 120
+  params = get_parncutt_params()
 ) {
+  # Sort out level_dB
+  level_dB <- if (is.null(level_dB)) params$level_dB else level_dB
+  level_dB <- if (length(level_dB) == 1) {
+    rep(level_dB, times = length(pitch_midi))
+  } else level_dB
+  # Check other inputs
   assertthat::assert_that(
     is.numeric(pitch_midi),
     is.numeric(level_dB),
-    is.numeric(num_harmonics), assertthat::is.scalar(num_harmonics),
-    is.function(harmonic_roll_off),
-    is.logical(stretched_octave), assertthat::is.scalar(stretched_octave),
-    is.numeric(k_t), assertthat::is.scalar(k_t),
-    is.numeric(k_p), assertthat::is.scalar(k_p),
-    is.numeric(k_c), assertthat::is.scalar(k_c),
-    is.numeric(k_s), assertthat::is.scalar(k_s),
-    length(level_dB) == 1 || length(level_dB) == length(pitch_midi)
+    length(level_dB) == length(pitch_midi)
   )
-  # Expand level_dB if only one value was provided
   message(
     "The analysis currently uses a 1/n roll-off in the dB domain, which seems unrealistic. ",
     "We should change this to a 1/n roll-off in the amplitude domain. ",
@@ -131,31 +123,37 @@ analyse_sonority <- function(
     "I think it would be best to empirically estimate a new template ",
     "by repeatedly sampling from the model at different pitches. "
   )
-  level_dB <- if (length(level_dB) == 1) {
-    rep(level_dB, times = length(pitch_midi))
-  } else level_dB
+  message(
+    "Expanding harmonics should be shifted to the utils package"
+  )
   # Expand harmonics if requested
   if (expand_harmonics) {
-    tmp <- expand_harmonics(pitch_midi = pitch_midi,
-                            level = level_dB,
-                            num_harmonics = num_harmonics,
-                            roll_off = harmonic_roll_off,
-                            min_midi = 0, max_midi = 120)
+    tmp <- expand_harmonics(
+      pitch_midi = pitch_midi,
+      level = level_dB,
+      num_harmonics = params$num_harmonics,
+      roll_off = params$harmonic_roll_off,
+      min_midi = params$min_midi,
+      max_midi = params$max_midi
+    )
     pitch_midi <- tmp$pitch_midi
     level_dB <- tmp$level
   }
   # Compute the analysis
-  new("sonority_analysis",
-      pitch_midi = pitch_midi,
-      level = level_dB,
-      template_num_harmonics = num_harmonics,
-      template_roll_off = harmonic_roll_off,
-      stretched_octave = stretched_octave,
-      k_t = k_t,
-      k_p = k_p,
-      k_c = k_c,
-      k_s = k_s,
-      min_midi = min_midi, max_midi = max_midi)
+  new(
+    "sonority_analysis",
+    pitch_midi = pitch_midi,
+    level = level_dB,
+    template_num_harmonics = params$num_harmonics,
+    template_roll_off = params$harmonic_roll_off,
+    stretched_octave = params$stretched_octave,
+    k_t = params$k_t,
+    k_p = params$k_p,
+    k_c = params$k_c,
+    k_s = params$k_s,
+    min_midi = params$min_midi,
+    max_midi = params$max_midi
+  )
 }
 
 
