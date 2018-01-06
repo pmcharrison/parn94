@@ -27,18 +27,20 @@ setClass("sonority_analysis",
 setMethod(
   f = "initialize",
   signature = "sonority_analysis",
-  definition = function(.Object,
-                        pitch_midi,
-                        level,
-                        keep_inaudible = FALSE,
-                        template_num_harmonics = 11, # including fundamental
-                        template_roll_off = function(x) 1 / (1 + x),
-                        stretched_octave = TRUE,
-                        k_t = 3,
-                        k_p = 0.5,
-                        k_c = 0.2,
-                        k_s = 0.5,
-                        min_midi = 0, max_midi = 120) {
+  definition = function(
+    .Object,
+    pitch_midi,
+    level,
+    keep_inaudible = FALSE,
+    template_num_harmonics = 11, # including fundamental
+    template_roll_off = function(x) 1 / (1 + x),
+    stretched_octave = TRUE,
+    k_t = 3,
+    k_p = 0.5,
+    k_c = 0.2,
+    k_s = 0.5,
+    min_midi = 0, max_midi = 120
+  ) {
     assertthat::assert_that(
       length(pitch_midi) == length(level),
       !anyDuplicated(pitch_midi)
