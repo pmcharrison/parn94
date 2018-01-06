@@ -253,8 +253,10 @@ get_pure_spectrum <- function(pitch_midi,
   order <- order(pitch_midi, decreasing = FALSE)
   df <- data.frame(pitch_midi = pitch_midi[order],
                    level = level[order])
-  df$kHz <- convert_midi_to_freq(df$pitch_midi,
-                                 stretched_octave = stretched_octave)
+  df$kHz <- HarmonyUtils::convert_midi_to_freq(
+    df$pitch_midi,
+    stretched_octave = stretched_octave
+  )
   df$free_field_threshold <- get_free_field_threshold(kHz = df$kHz)
   df$auditory_level <- pmax(df$level -
                               df$free_field_threshold, 0)
@@ -288,17 +290,6 @@ sum_sound_levels <- function(x, y, coherent = FALSE) {
   } else {
     10 * log10(10 ^ (x / 10) + 10 ^ (y / 10))
   }
-}
-
-#' Convert MIDI note numbers to frequencies
-#'
-#' Converts MIDI note numbers to frequencies (kHz), optionally using stretched octaves. Corresponds to Equation 1 of Parncutt & Strasburger (1994).
-#' @param midi Numeric vector of MIDI note numbers
-#' @param stretched_octave Logical scalar; whether or not to use a stretched octave
-#' @return Numeric vector of frequencies in kHz
-#' @export
-convert_midi_to_freq <- function(midi, stretched_octave = TRUE) {
-  0.44 * (2 ^ ((midi - 57) / if (stretched_octave) 11.9 else 12))
 }
 
 #' Get free field threshold
