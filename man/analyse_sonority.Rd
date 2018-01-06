@@ -4,9 +4,8 @@
 \alias{analyse_sonority}
 \title{Analyse sonority}
 \usage{
-analyse_sonority(pitch_midi, level_dB = 60, expand_harmonics = TRUE,
-  num_harmonics = 11, harmonic_roll_off = function(x) 1/(1 + x), k_t = 3,
-  k_p = 0.5, k_c = 0.2, k_s = 0.5, min_midi = 0, max_midi = 120)
+analyse_sonority(pitch_midi, level_dB = NULL, expand_harmonics = TRUE,
+  params = get_parncutt_params())
 }
 \arguments{
 \item{pitch_midi}{Numeric vector of MIDI pitches in the sonority}
@@ -18,6 +17,8 @@ analyse_sonority(pitch_midi, level_dB = 60, expand_harmonics = TRUE,
 \item{num_harmonics}{Numeric scalar; if \code{expand_harmonics} is \code{TRUE}, this determines how many harmonics are provided for each pitch, including the fundamental}
 
 \item{harmonic_roll_off}{Function describing the roll off in sound levels as a function of harmonic number}
+
+\item{stretched_octave}{Logical scalar; whether or not to use stretched octaves, default from Parncutt & Strasburger (1994) is \code{TRUE}}
 
 \item{k_t}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
 

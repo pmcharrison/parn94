@@ -7,8 +7,9 @@
 \usage{
 \S4method{initialize}{sonority_analysis}(.Object, pitch_midi, level,
   keep_inaudible = FALSE, template_num_harmonics = 11,
-  template_roll_off = function(x) 1/(1 + x), k_t = 3, k_p = 0.5,
-  k_c = 0.2, k_s = 0.5, min_midi = 0, max_midi = 120)
+  template_roll_off = function(x) 1/(1 + x), stretched_octave = TRUE,
+  k_t = 3, k_p = 0.5, k_c = 0.2, k_s = 0.5, min_midi = 0,
+  max_midi = 120)
 }
 \arguments{
 \item{k_t}{Parncutt & Strasburger (1994) set this to 3 (p. 104)}
