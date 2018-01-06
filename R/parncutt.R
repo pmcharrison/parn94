@@ -258,7 +258,7 @@ get_pure_spectrum <- function(
   df$kHz <- HarmonyUtils::convert_midi_to_freq(
     df$pitch_midi,
     stretched_octave = stretched_octave
-  )
+  ) / 1000
   df$free_field_threshold <- get_free_field_threshold(kHz = df$kHz)
   df$auditory_level <- pmax(df$level -
                               df$free_field_threshold, 0)
