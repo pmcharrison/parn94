@@ -104,7 +104,8 @@ get_parncutt_sonority_analysis <- function(
   pitch_midi,
   level_dB = NULL,
   expand_harmonics = TRUE,
-  params = get_parncutt_params()
+  params = get_parncutt_params(),
+  simple = TRUE
 ) {
   # Sort out level_dB
   level_dB <- if (is.null(level_dB)) params$level_dB else level_dB
@@ -115,7 +116,8 @@ get_parncutt_sonority_analysis <- function(
   assertthat::assert_that(
     is.numeric(pitch_midi),
     is.numeric(level_dB),
-    length(level_dB) == length(pitch_midi)
+    length(level_dB) == length(pitch_midi),
+    assertthat::is.scalar(simple), is.logical(simple)
   )
   message(
     "The analysis currently uses a 1/n roll-off in the dB domain, which seems unrealistic. ",
@@ -142,7 +144,7 @@ get_parncutt_sonority_analysis <- function(
     level_dB <- tmp$level
   }
   # Compute the analysis
-  new(
+  res <- new(
     "sonority_analysis",
     pitch_midi = pitch_midi,
     level = level_dB,
@@ -156,6 +158,13 @@ get_parncutt_sonority_analysis <- function(
     min_midi = params$min_midi,
     max_midi = params$max_midi
   )
+  if (simple) {
+    list(
+      pure_sonorousness = res@pure_sonorousness,
+      complex_sonorousness = res@complex_sonorousness,
+      multiplicity = res@multiplicity
+    )
+  } else res
 }
 
 
