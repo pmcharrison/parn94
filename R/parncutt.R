@@ -97,17 +97,19 @@ setMethod(
 #' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
 #' @param max_midi Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model
 #' @export
-analyse_sonority <- function(pitch_midi,
-                             level_dB = 60,
-                             expand_harmonics = TRUE,
-                             num_harmonics = 11,
-                             harmonic_roll_off = function(x) 1 / (1 + x),
-                             stretched_octave = TRUE,
-                             k_t = 3,
-                             k_p = 0.5,
-                             k_c = 0.2,
-                             k_s = 0.5,
-                             min_midi = 0, max_midi = 120) {
+analyse_sonority <- function(
+  pitch_midi,
+  level_dB = 60,
+  expand_harmonics = TRUE,
+  num_harmonics = 11,
+  harmonic_roll_off = function(x) 1 / (1 + x),
+  stretched_octave = TRUE,
+  k_t = 3,
+  k_p = 0.5,
+  k_c = 0.2,
+  k_s = 0.5,
+  min_midi = 0, max_midi = 120
+) {
   assertthat::assert_that(
     is.numeric(pitch_midi),
     is.numeric(level_dB),
