@@ -278,20 +278,6 @@ get_pure_spectrum <- function(pitch_midi,
   df
 }
 
-#' Sums pairs of sound levels assuming either coherent or incoherent (default) wave superposition
-#' @param x The first sound level to be summed in dB (can be vectorised)
-#' @param y The second sound level to be summed in dB (can be vectorised)
-sum_sound_levels <- function(x, y, coherent = FALSE) {
-  assertthat::assert_that(
-    length(x) == length(y)
-  )
-  if (coherent) {
-    20 * log10(10 ^ (x / 20) + 10 ^ (y / 20))
-  } else {
-    10 * log10(10 ^ (x / 10) + 10 ^ (y / 10))
-  }
-}
-
 #' Get free field threshold
 #'
 #' Returns the free-field threshold (dB SPL) of hearing in quiet for pure tones of given frequencies. This is the minimum sound level at which a pure tone at that frequency will be heard. Corresponds to Equation 2 in Parncutt & Strasburger (1994).
