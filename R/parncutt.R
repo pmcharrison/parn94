@@ -100,7 +100,7 @@ setMethod(
 #' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
 #' @param max_midi Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model
 #' @export
-analyse_sonority <- function(
+get_parncutt_sonority_analysis <- function(
   pitch_midi,
   level_dB = NULL,
   expand_harmonics = TRUE,
@@ -185,8 +185,8 @@ setMethod(
   signature = c("numeric", "numeric"),
   definition = function(chord_1, chord_2, params = get_parncutt_params()) {
     get_pitch_commonality(
-      chord_1 = analyse_sonority(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
-      chord_2 = analyse_sonority(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
+      chord_1 = get_parncutt_sonority_analysis(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
+      chord_2 = get_parncutt_sonority_analysis(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
       params = get_parncutt_params()
     )
   }
@@ -209,8 +209,8 @@ setMethod(
   signature = c("numeric", "numeric"),
   definition = function(chord_1, chord_2, params = get_parncutt_params()) {
     get_pitch_distance(
-      chord_1 = analyse_sonority(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
-      chord_2 = analyse_sonority(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
+      chord_1 = get_parncutt_sonority_analysis(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
+      chord_2 = get_parncutt_sonority_analysis(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
       params = get_parncutt_params()
     )
   }
