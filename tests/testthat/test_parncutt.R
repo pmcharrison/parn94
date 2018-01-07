@@ -70,10 +70,6 @@ test_that("get_pure_tone_audibility", {
   )
 })
 
-test_that("sum_sound_levels", {
-  expect_equal(sum_sound_levels(60, 60) %>% round, 63)
-})
-
 test_that("get_expanded_salience_vector", {
   expect_equal(
     get_expanded_salience_vector(data.frame(pitch_midi = 1:5, salience = 1),
