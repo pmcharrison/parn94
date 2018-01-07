@@ -5,7 +5,7 @@
 \title{Analyse sonority}
 \usage{
 get_parncutt_sonority_analysis(pitch_midi, level_dB = NULL,
-  expand_harmonics = TRUE, params = get_parncutt_params())
+  expand_harmonics = TRUE, params = get_parncutt_params(), simple = TRUE)
 }
 \arguments{
 \item{pitch_midi}{Numeric vector of MIDI pitches in the sonority}
