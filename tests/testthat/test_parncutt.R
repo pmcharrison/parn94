@@ -1,11 +1,5 @@
 context("Parncutt")
 
-test_that("convert_midi_to_freq maps to appropriate frequencies", {
-  expect_equal(HarmonyUtils::convert_midi_to_freq(57, stretched_octave = FALSE), 0.440)
-  expect_equal(HarmonyUtils::convert_midi_to_freq(69, stretched_octave = FALSE), 0.880)
-  expect_equal(HarmonyUtils::convert_midi_to_freq(c(57, 69), stretched_octave = FALSE), c(0.440, 0.880))
-})
-
 test_that("get_pure_tone_height matches figures given in Parncutt & Strasburger (1994)", {
   expect_equal(round(get_pure_tone_height(0)), 0)
   expect_equal(round(get_pure_tone_height(16)), 36)
