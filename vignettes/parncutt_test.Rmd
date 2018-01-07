@@ -7,8 +7,8 @@ vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: bib.bib
-csl: apa.csl
+bibliography: "`r system.file('bib.bib', package = 'HarmonyParncutt')`"
+csl: "`r system.file('apa.csl', package = 'HarmonyParncutt')`"
 ---
 
 ```{r setup, include = FALSE}
@@ -16,7 +16,6 @@ knitr::opts_chunk$set(echo = FALSE)
 
 library(ggplot2)
 library(HarmonyParncutt)
-library(HarmonyToolbox)
 library(magrittr)
 library(parallel)
 
@@ -37,7 +36,7 @@ This report compares this package's implementation of Parncutt's pitch commonali
 
 ## Results
 
-```{r, include = TRUE, cache = TRUE}
+```{r, include = TRUE}
 df <- bigand_1996 %>%
   (function(df) {
     df$pitch_commonality_new <- mclapply(

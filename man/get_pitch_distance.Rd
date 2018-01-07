@@ -4,7 +4,8 @@
 \alias{get_pitch_distance}
 \title{Get pitch distance}
 \usage{
-get_pitch_distance(chord_1, chord_2, parncutt_params = get_parncutt_params())
+get_pitch_distance(chord_1, chord_2, midi_params = get_midi_params(),
+  parncutt_params = get_parncutt_params())
 }
 \arguments{
 \item{chord_1}{The first chord to compare}

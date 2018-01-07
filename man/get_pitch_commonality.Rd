@@ -4,7 +4,7 @@
 \alias{get_pitch_commonality}
 \title{Get pitch commonality}
 \usage{
-get_pitch_commonality(chord_1, chord_2,
+get_pitch_commonality(chord_1, chord_2, midi_params = get_midi_params(),
   parncutt_params = get_parncutt_params())
 }
 \arguments{

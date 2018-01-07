@@ -1,4 +1,3 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
-vignettes/parncutt_test.Rmd
