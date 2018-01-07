@@ -256,7 +256,6 @@ setMethod(
 get_pure_spectrum <- function(
   pitch_midi,
   level,
-  keep_inaudible,
   template_num_harmonics,
   template_roll_off,
   stretched_octave
@@ -283,9 +282,7 @@ get_pure_spectrum <- function(
   df$pure_tone_audibility <- get_pure_tone_audibility(
     pure_tone_audible_level = df$pure_tone_audible_level
   )
-  if (!keep_inaudible) {
-    df <- df[df$pure_tone_audibility > 0, ]
-  }
+  df <- df[df$pure_tone_audibility > 0, ]
   df
 }
 
