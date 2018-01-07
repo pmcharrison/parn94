@@ -4,8 +4,8 @@
 \alias{get_complex_spectrum}
 \title{Get complex spectrum}
 \usage{
-get_complex_spectrum(pitch_midi, pure_tone_audibility, template_num_harmonics,
-  template_roll_off, k_t, min_midi = 0, max_midi = 120)
+get_complex_spectrum(pitch_midi, pure_tone_audibility,
+  midi_params = get_midi_params(), parncutt_params = get_parncutt_params())
 }
 \arguments{
 \item{pitch_midi}{Numeric vector of pure tone MIDI pitches}

@@ -1,4 +1,4 @@
 library(testthat)
-library(HarmonyToolbox)
+library(HarmonyParncutt)
 
-test_check("HarmonyToolbox")
+test_check("HarmonyParncutt")

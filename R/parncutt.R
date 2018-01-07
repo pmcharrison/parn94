@@ -6,6 +6,14 @@
 #' @importFrom magrittr "%>%"
 NULL
 
+#' @importFrom stats cor
+NULL
+
+#' @importFrom methods .valueClassTest
+NULL
+
+#' @importFrom methods new
+
 #' @export
 setClass("sonority_analysis",
          slots = list(
@@ -31,15 +39,8 @@ setMethod(
     .Object,
     pitch_midi,
     level,
-    keep_inaudible = FALSE,
-    template_num_harmonics = 11, # including fundamental
-    template_roll_off = function(x) 1 / (1 + x),
-    stretched_octave = TRUE,
-    k_t = 3,
-    k_p = 0.5,
-    k_c = 0.2,
-    k_s = 0.5,
-    min_midi = 0, max_midi = 120
+    midi_params = get_midi_params(),
+    parncutt_params = get_parncutt_params()
   ) {
     assertthat::assert_that(
       length(pitch_midi) == length(level),
@@ -48,41 +49,37 @@ setMethod(
     .Object@pure_spectrum <- get_pure_spectrum(
       pitch_midi = pitch_midi,
       level = level,
-      keep_inaudible = keep_inaudible,
-      template_num_harmonics = template_num_harmonics,
-      template_roll_off = template_roll_off,
-      stretched_octave = stretched_octave
+      midi_params = midi_params,
+      parncutt_params = parncutt_params
     )
     .Object@complex_spectrum <- get_complex_spectrum(
       pitch_midi = .Object@pure_spectrum$pitch_midi,
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
-      template_num_harmonics = template_num_harmonics,
-      template_roll_off = template_roll_off,
-      k_t = k_t, min_midi = min_midi, max_midi = max_midi
+      midi_params = midi_params,
+      parncutt_params = parncutt_params
     )
     .Object@combined_spectrum <- get_combined_spectrum(
       pure_midi_pitch = .Object@pure_spectrum$pitch_midi,
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
       complex_midi_pitch = .Object@complex_spectrum$pitch_midi,
       complex_tone_audibility = .Object@complex_spectrum$complex_tone_audibility,
-      k_s = k_s
+      k_s = parncutt_params$k_s
     )
     .Object@pure_sonorousness <- get_pure_sonorousness(
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
-      k_p = k_p
+      k_p = parncutt_params$k_p
     )
     .Object@complex_sonorousness <- get_complex_sonorousness(
       complex_tone_audibility = .Object@complex_spectrum$complex_tone_audibility,
-      k_c = k_c
+      k_c = parncutt_params$k_c
     )
     .Object@multiplicity <- get_multiplicity(
       combined_audibility = .Object@combined_spectrum$combined_audibility,
-      k_s = k_s
+      k_s = parncutt_params$k_s
     )
     return(.Object)
   }
 )
-
 
 #' Analyse sonority
 #'
@@ -90,28 +87,19 @@ setMethod(
 #' @param pitch_midi Numeric vector of MIDI pitches in the sonority
 #' @param level_dB Numeric vector of sound levels (dB) for these pitches; must either be length 1 or of the same length as \code{pitch_midi}
 #' @param expand_harmonics Boolean scalar; whether or not to expand these pitches to include their implied harmonics
-#' @param num_harmonics Numeric scalar; if \code{expand_harmonics} is \code{TRUE}, this determines how many harmonics are provided for each pitch, including the fundamental
-#' @param harmonic_roll_off Function describing the roll off in sound levels as a function of harmonic number
-#' @param stretched_octave Logical scalar; whether or not to use stretched octaves, default from Parncutt & Strasburger (1994) is \code{TRUE}
-#' @param k_t Numeric scalar; parameter from Parncutt & Strasburger (1994)
-#' @param k_p Numeric scalar; parameter from Parncutt & Strasburger (1994)
-#' @param k_c Numeric scalar; parameter from Parncutt & Strasburger (1994)
-#' @param k_s Numeric scalar; parameter from Parncutt & Strasburger (1994)
-#' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
-#' @param max_midi Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model
+#' @param simple Whether or not to provide a simplified model output
 #' @export
 get_parncutt_sonority_analysis <- function(
   pitch_midi,
   level_dB = NULL,
   expand_harmonics = TRUE,
-  params = get_parncutt_params(),
-  simple = TRUE
+  simple = TRUE,
+  midi_params = get_midi_params(),
+  parncutt_params = get_parncutt_params()
 ) {
   # Sort out level_dB
-  level_dB <- if (is.null(level_dB)) params$level_dB else level_dB
-  level_dB <- if (length(level_dB) == 1) {
-    rep(level_dB, times = length(pitch_midi))
-  } else level_dB
+  level_dB <- if (is.null(level_dB)) midi_params$fundamental_level_dB else level_dB
+  level_dB <- HarmonyUtils::rep_to_match(level_dB, pitch_midi)
   # Check other inputs
   assertthat::assert_that(
     is.numeric(pitch_midi),
@@ -125,38 +113,30 @@ get_parncutt_sonority_analysis <- function(
     "In this context, Parncutt's 1/n roll-off for the audibility template seems wrong, ",
     "because amplitude and audibility have a non-linear relationship. ",
     "I think it would be best to empirically estimate a new template ",
-    "by repeatedly sampling from the model at different pitches. "
-  )
-  message(
-    "Expanding harmonics should be shifted to the utils package"
+    "by repeatedly sampling from the model at different pitches."
   )
   # Expand harmonics if requested
   if (expand_harmonics) {
-    tmp <- HarmonyUtils::expand_harmonics_midi(
-      pitch_midi = pitch_midi,
-      level = level_dB,
-      num_harmonics = params$num_harmonics,
-      roll_off = params$harmonic_roll_off,
-      min_midi = params$min_midi,
-      max_midi = params$max_midi
+    tmp <- HarmonyUtils::expand_harmonics(
+      frequency = pitch_midi,
+      amplitude = level_dB,
+      dB = TRUE,
+      frequency_scale = "midi",
+      num_harmonics = midi_params$num_harmonics,
+      roll_off = midi_params$roll_off
     )
-    pitch_midi <- tmp$pitch_midi
-    level_dB <- tmp$level
+    tmp <- tmp[tmp$frequency >= parncutt_params$min_midi &
+                 tmp$frequency <= parncutt_params$max_midi, ]
+    pitch_midi <- tmp$frequency
+    level_dB <- tmp$amplitude
   }
   # Compute the analysis
   res <- new(
     "sonority_analysis",
     pitch_midi = pitch_midi,
     level = level_dB,
-    template_num_harmonics = params$num_harmonics,
-    template_roll_off = params$harmonic_roll_off,
-    stretched_octave = params$stretched_octave,
-    k_t = params$k_t,
-    k_p = params$k_p,
-    k_c = params$k_c,
-    k_s = params$k_s,
-    min_midi = params$min_midi,
-    max_midi = params$max_midi
+    midi_params = midi_params,
+    parncutt_params = parncutt_params
   )
   if (simple) {
     list(
@@ -177,26 +157,45 @@ get_parncutt_sonority_analysis <- function(
 #' @export
 setGeneric("get_pitch_commonality",
            valueClass = "numeric",
-           function(chord_1, chord_2, params = get_parncutt_params()) {
+           function(chord_1, chord_2,
+                    midi_params = get_midi_params(),
+                    parncutt_params = get_parncutt_params()) {
              standardGeneric("get_pitch_commonality")
            })
 setMethod(
   f = "get_pitch_commonality",
   signature = c("sonority_analysis", "sonority_analysis"),
-  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
+  definition = function(chord_1, chord_2,
+                        midi_params = get_midi_params(),
+                        parncutt_params = get_parncutt_params()) {
     cor(
-      get_expanded_salience_vector(chord_1, min_midi = params$min_midi, max_midi = params$max_midi),
-      get_expanded_salience_vector(chord_2, min_midi = params$min_midi, max_midi = params$max_midi)
+      get_expanded_salience_vector(chord_1,
+                                   min_midi = parncutt_params$min_midi,
+                                   max_midi = parncutt_params$max_midi),
+      get_expanded_salience_vector(chord_2,
+                                   min_midi = parncutt_params$min_midi,
+                                   max_midi = parncutt_params$max_midi)
     )
   })
 setMethod(
   f = "get_pitch_commonality",
   signature = c("numeric", "numeric"),
-  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
+  definition = function(chord_1, chord_2,
+                        midi_params = get_midi_params(),
+                        parncutt_params = get_parncutt_params()) {
     get_pitch_commonality(
-      chord_1 = get_parncutt_sonority_analysis(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
-      chord_2 = get_parncutt_sonority_analysis(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
-      params = get_parncutt_params()
+      chord_1 = get_parncutt_sonority_analysis(chord_1,
+                                               expand_harmonics = TRUE,
+                                               midi_params = midi_params,
+                                               parncutt_params = parncutt_params,
+                                               simple = FALSE),
+      chord_2 = get_parncutt_sonority_analysis(chord_2,
+                                               expand_harmonics = TRUE,
+                                               midi_params = midi_params,
+                                               parncutt_params = parncutt_params,
+                                               simple = FALSE),
+      midi_params = midi_params,
+      parncutt_params = parncutt_params
     )
   }
 )
@@ -210,38 +209,57 @@ setMethod(
 #' @export
 setGeneric("get_pitch_distance",
            valueClass = "numeric",
-           function(chord_1, chord_2, params = get_parncutt_params()) {
+           function(chord_1, chord_2,
+                    midi_params = get_midi_params(),
+                    parncutt_params = get_parncutt_params()) {
              standardGeneric("get_pitch_distance")
            })
 setMethod(
   f = "get_pitch_distance",
   signature = c("numeric", "numeric"),
-  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
+  definition = function(chord_1, chord_2,
+                        midi_params = get_midi_params(),
+                        parncutt_params = get_parncutt_params()) {
     get_pitch_distance(
-      chord_1 = get_parncutt_sonority_analysis(chord_1, expand_harmonics = TRUE, params = get_parncutt_params()),
-      chord_2 = get_parncutt_sonority_analysis(chord_2, expand_harmonics = TRUE, params = get_parncutt_params()),
-      params = get_parncutt_params()
+      chord_1 = get_parncutt_sonority_analysis(chord_1,
+                                               expand_harmonics = TRUE,
+                                               midi_params = midi_params,
+                                               parncutt_params = parncutt_params,
+                                               simple = FALSE),
+      chord_2 = get_parncutt_sonority_analysis(chord_2,
+                                               expand_harmonics = TRUE,
+                                               midi_params = midi_params,
+                                               parncutt_params = parncutt_params,
+                                               simple = FALSE),
+      parncutt_params = get_parncutt_params()
     )
   }
 )
 setMethod(
   f = "get_pitch_distance",
   signature = c("sonority_analysis", "sonority_analysis"),
-  definition = function(chord_1, chord_2, params = get_parncutt_params()) {
+  definition = function(chord_1,
+                        chord_2,
+                        midi_params = get_midi_params(),
+                        parncutt_params = get_parncutt_params()) {
     s1 <- get_expanded_salience_vector(
-      chord_1, min_midi = params$min_midi, max_midi = params$max_midi
+      chord_1, min_midi = parncutt_params$min_midi, max_midi = parncutt_params$max_midi
     )
     s2 <- get_expanded_salience_vector(
-      chord_2, min_midi = params$min_midi, max_midi = params$max_midi
+      chord_2, min_midi = parncutt_params$min_midi, max_midi = parncutt_params$max_midi
     )
     # We define some matrices that will allow us to vectorise our calculation -
     # see Equation 17 of Parncutt & Strasburger to see how this works.
     # Element [i, j] of each matrix corresponds to one combination of P / P'
     # in Equation 17.
     dim <- length(s1)
-    m1 <- matrix(data = rep(seq(from = params$min_midi, to = params$max_midi), each = dim),
+    m1 <- matrix(data = rep(seq(from = parncutt_params$min_midi,
+                                to = parncutt_params$max_midi),
+                            each = dim),
                  nrow = dim, byrow = TRUE)
-    m2 <- matrix(data = rep(seq(from = params$min_midi, to = params$max_midi), each = dim),
+    m2 <- matrix(data = rep(seq(from = parncutt_params$min_midi,
+                                to = parncutt_params$max_midi),
+                            each = dim),
                  nrow = dim, byrow = FALSE)
     dist <- abs(m1 - m2)
     s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
@@ -256,16 +274,15 @@ setMethod(
 get_pure_spectrum <- function(
   pitch_midi,
   level,
-  template_num_harmonics,
-  template_roll_off,
-  stretched_octave
+  midi_params,
+  parncutt_params
 ) {
   order <- order(pitch_midi, decreasing = FALSE)
   df <- data.frame(pitch_midi = pitch_midi[order],
                    level = level[order])
   df$kHz <- HarmonyUtils::convert_midi_to_freq(
     df$pitch_midi,
-    stretched_octave = stretched_octave
+    stretched_octave = midi_params$stretched_octave
   ) / 1000
   df$free_field_threshold <- get_free_field_threshold(kHz = df$kHz)
   df$auditory_level <- pmax(df$level -
@@ -343,11 +360,7 @@ get_partial_masking_level <- function(masker_auditory_level,
     data = rep(masker_pure_tone_height, each = nrow),
     nrow = nrow, ncol = ncol, byrow = FALSE
   )
-  # Maskee matrices
-  maskee_auditory_level_matrix <- matrix(
-    data = rep(maskee_auditory_level, each = ncol),
-    nrow = nrow, ncol = ncol, byrow = TRUE
-  )
+  # Maskee matrix
   maskee_pure_tone_height_matrix <- matrix(
     data = rep(maskee_pure_tone_height, each = ncol),
     nrow = nrow, ncol = ncol, byrow = TRUE
@@ -425,29 +438,34 @@ get_pure_tone_audibility <- function(pure_tone_audible_level, al_0 = 15) {
 #' @param k_t corresponds to parameter \eqn{k_t} in Equation 10 of Parncutt & Strasburger (1994)
 #' @param min_midi Minimum MIDI pitch considered in the auditory model
 #' @param max_midi Maximum MIDI pitch considered in the auditory model
-get_complex_spectrum <- function(pitch_midi, pure_tone_audibility,
-                                 template_num_harmonics,
-                                 template_roll_off,
-                                 k_t,
-                                 min_midi = 0, max_midi = 120) {
-  spectrum <- data.frame(pitch_midi = pitch_midi,
-                         pure_tone_audibility = pure_tone_audibility)
-  template <- HarmonyUtils::get_harmonic_template_midi(
-    num_harmonics = template_num_harmonics,
-    level = 1,
-    roll_off = template_roll_off
+get_complex_spectrum <- function(
+  pitch_midi,
+  pure_tone_audibility,
+  midi_params = get_midi_params(),
+  parncutt_params = get_parncutt_params()
+) {
+  spectrum <- data.frame(
+    pitch_midi = pitch_midi,
+    pure_tone_audibility = pure_tone_audibility
   )
-  df <- data.frame(pitch_midi = seq(from = min_midi,
-                                    to = max_midi),
+  template <- HarmonyUtils::get_harmonic_template(
+    num_harmonics = parncutt_params$template_num_harmonics,
+    amplitude = 1,
+    roll_off = parncutt_params$template_roll_off,
+    interval_scale = "midi",
+    round_midi_intervals = TRUE
+  ) %>% HarmonyUtils::rename_columns(c(amplitude = "weight"))
+  df <- data.frame(pitch_midi = seq(from = parncutt_params$min_midi,
+                                    to = parncutt_params$max_midi),
                    complex_tone_audibility = NA)
   df$complex_tone_audibility <- vapply(
     df$pitch_midi,
     function(pitch) {
-      transposed_template <- data.frame(pitch_midi = template$pitch + pitch,
-                                        weight = template$level)
+      transposed_template <- data.frame(pitch_midi = template$interval + pitch,
+                                        weight = template$weight)
       df <- merge(transposed_template, spectrum,
                   all.x = FALSE, all.y = FALSE)
-      ((sum(sqrt(df$weight * df$pure_tone_audibility))) ^ 2) / k_t
+      ((sum(sqrt(df$weight * df$pure_tone_audibility))) ^ 2) / parncutt_params$k_t
     }, numeric(1)
   )
   df <- df[df$complex_tone_audibility > 0, ]

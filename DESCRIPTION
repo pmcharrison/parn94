@@ -11,9 +11,10 @@ Suggests: testthat,
     knitr,
     rmarkdown
 RoxygenNote: 6.0.1
-Imports: methods,
-    assertthat,
+Imports: assertthat,
     ggplot2,
+    methods,
     parallel,
+    magrittr,
     HarmonyUtils (>= 0.3.0)
 VignetteBuilder: knitr

@@ -5,7 +5,8 @@
 \title{Analyse sonority}
 \usage{
 get_parncutt_sonority_analysis(pitch_midi, level_dB = NULL,
-  expand_harmonics = TRUE, params = get_parncutt_params(), simple = TRUE)
+  expand_harmonics = TRUE, simple = TRUE, midi_params = get_midi_params(),
+  parncutt_params = get_parncutt_params())
 }
 \arguments{
 \item{pitch_midi}{Numeric vector of MIDI pitches in the sonority}
@@ -14,23 +15,7 @@ get_parncutt_sonority_analysis(pitch_midi, level_dB = NULL,
 
 \item{expand_harmonics}{Boolean scalar; whether or not to expand these pitches to include their implied harmonics}
 
-\item{num_harmonics}{Numeric scalar; if \code{expand_harmonics} is \code{TRUE}, this determines how many harmonics are provided for each pitch, including the fundamental}
-
-\item{harmonic_roll_off}{Function describing the roll off in sound levels as a function of harmonic number}
-
-\item{stretched_octave}{Logical scalar; whether or not to use stretched octaves, default from Parncutt & Strasburger (1994) is \code{TRUE}}
-
-\item{k_t}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
-
-\item{k_p}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
-
-\item{k_c}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
-
-\item{k_s}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
-
-\item{min_midi}{Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model}
-
-\item{max_midi}{Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model}
+\item{simple}{Whether or not to provide a simplified model output}
 }
 \description{
 Analyse a sonority using Parncutt's psychoacoustic models.

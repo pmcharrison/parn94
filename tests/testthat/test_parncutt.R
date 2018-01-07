@@ -83,4 +83,37 @@ test_that("get_pitch_distance", {
     get_pitch_distance(c(60, 64, 67), c(60, 64, 67)),
     0
   )
+  expect_gt(
+    # Presumably C# major should be closer in pitch to
+    # C major than e.g. F major
+    get_pitch_distance(c(60, 64, 67), c(65, 69, 72)),
+    get_pitch_distance(c(60, 64, 67), c(61, 65, 68))
+  )
+})
+
+test_that("get_pitch_commonality", {
+  expect_equal(
+    get_pitch_commonality(c(60, 64, 67), c(60, 64, 67)),
+    1
+  )
+  expect_gt(
+    # G major should be closer to C major than F# major is to C major
+    get_pitch_commonality(c(60, 64, 67), c(59, 62, 67)),
+    get_pitch_commonality(c(60, 64, 67), c(61, 66, 68))
+  )
+  expect_gt(
+    # G major vs C# major
+    get_pitch_commonality(c(60, 64, 67), c(59, 62, 67)),
+    get_pitch_commonality(c(60, 64, 67), c(61, 65, 68))
+  )
+  expect_gt(
+    # G major vs C transposed
+    get_pitch_commonality(c(60, 64, 67), c(48, 76, 79)),
+    get_pitch_commonality(c(60, 64, 67), c(59, 62, 67))
+  )
+})
+
+test_that("style", {
+  functions <- lsf.str("package:HarmonyParncutt") %>% as.character
+  sapply(functions, function(x) expect_true(checkFun(x)))
 })

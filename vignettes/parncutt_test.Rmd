@@ -15,12 +15,13 @@ csl: apa.csl
 knitr::opts_chunk$set(echo = FALSE)
 
 library(ggplot2)
+library(HarmonyParncutt)
 library(HarmonyToolbox)
 library(magrittr)
 library(parallel)
 
-data("bigand_1996")
-data("bigand_1996_reference_chord")
+data("bigand_1996", package = "HarmonyParncutt")
+data("bigand_1996_reference_chord", package = "HarmonyParncutt")
 
 theme_set(theme_bw() +
             theme(panel.grid.major = element_blank(),
@@ -36,7 +37,7 @@ This report compares this package's implementation of Parncutt's pitch commonali
 
 ## Results
 
-```{r, include = TRUE}
+```{r, include = TRUE, cache = TRUE}
 df <- bigand_1996 %>%
   (function(df) {
     df$pitch_commonality_new <- mclapply(

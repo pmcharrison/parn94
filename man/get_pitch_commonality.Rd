@@ -4,7 +4,8 @@
 \alias{get_pitch_commonality}
 \title{Get pitch commonality}
 \usage{
-get_pitch_commonality(chord_1, chord_2, params = get_parncutt_params())
+get_pitch_commonality(chord_1, chord_2,
+  parncutt_params = get_parncutt_params())
 }
 \arguments{
 \item{chord_1}{The first chord to compare}
