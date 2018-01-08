@@ -52,6 +52,9 @@ setMethod(
       midi_params = midi_params,
       parncutt_params = parncutt_params
     )
+    if (nrow(.Object@pure_spectrum) == 0) {
+      stop("Parncutt's sonority analysis found no audible components in sonority, don't know how to proceed.")
+    }
     .Object@complex_spectrum <- get_complex_spectrum(
       pitch_midi = .Object@pure_spectrum$pitch_midi,
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
