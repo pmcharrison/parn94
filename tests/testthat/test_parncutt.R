@@ -89,6 +89,16 @@ test_that("get_pitch_distance", {
     get_pitch_distance(c(60, 64, 67), c(65, 69, 72)),
     get_pitch_distance(c(60, 64, 67), c(61, 65, 68))
   )
+  # These numbers are taken from previous versions of this package,
+  # and have not been compared to other literature/software
+  expect_equal(
+    get_pitch_distance(c(60, 64, 67), c(65, 69, 72)),
+    3.86723877405512
+  )
+  expect_equal(
+    get_pitch_distance(c(60, 64, 67), c(65, 63, 83)),
+    37.8133050960468
+  )
 })
 
 test_that("get_pitch_commonality", {
@@ -110,6 +120,16 @@ test_that("get_pitch_commonality", {
     # G major vs C transposed
     get_pitch_commonality(c(60, 64, 67), c(48, 76, 79)),
     get_pitch_commonality(c(60, 64, 67), c(59, 62, 67))
+  )
+  # These numbers are taken from previous versions of this package,
+  # and have not been compared to other literature/software
+  expect_equal(
+    get_pitch_commonality(c(60, 64, 67), c(48, 76, 79)),
+    0.894901857522212
+  )
+  expect_equal(
+    get_pitch_commonality(c(60, 64, 67), c(59, 62, 67)),
+    0.349625432417314
   )
 })
 

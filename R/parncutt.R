@@ -198,20 +198,23 @@ setMethod(
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
                         parncutt_params = get_parncutt_params()) {
-    get_pitch_commonality(
-      chord_1 = get_parncutt_sonority_analysis(chord_1,
-                                               expand_harmonics = TRUE,
-                                               midi_params = midi_params,
-                                               parncutt_params = parncutt_params,
-                                               simple = FALSE),
-      chord_2 = get_parncutt_sonority_analysis(chord_2,
-                                               expand_harmonics = TRUE,
-                                               midi_params = midi_params,
-                                               parncutt_params = parncutt_params,
-                                               simple = FALSE),
-      midi_params = midi_params,
-      parncutt_params = parncutt_params
-    )
+    list(chord_1, chord_2) %>%
+      lapply(function(chord) {
+        get_parncutt_sonority_analysis(
+          chord,
+          expand_harmonics = TRUE,
+          midi_params = midi_params,
+          parncutt_params = parncutt_params,
+          simple = FALSE
+        )
+      }) %>%
+      (function(x) {
+        get_pitch_commonality(
+          x[[1]], x[[2]],
+          midi_params = midi_params,
+          parncutt_params = parncutt_params
+        )
+      })
   }
 )
 
@@ -232,22 +235,27 @@ setGeneric("get_pitch_distance",
 setMethod(
   f = "get_pitch_distance",
   signature = c("numeric", "numeric"),
-  definition = function(chord_1, chord_2,
-                        midi_params = get_midi_params(),
-                        parncutt_params = get_parncutt_params()) {
-    get_pitch_distance(
-      chord_1 = get_parncutt_sonority_analysis(chord_1,
-                                               expand_harmonics = TRUE,
-                                               midi_params = midi_params,
-                                               parncutt_params = parncutt_params,
-                                               simple = FALSE),
-      chord_2 = get_parncutt_sonority_analysis(chord_2,
-                                               expand_harmonics = TRUE,
-                                               midi_params = midi_params,
-                                               parncutt_params = parncutt_params,
-                                               simple = FALSE),
-      parncutt_params = get_parncutt_params()
-    )
+  definition = function(
+    chord_1, chord_2,
+    midi_params = get_midi_params(),
+    parncutt_params = get_parncutt_params()
+  ) {
+    list(chord_1, chord_2) %>%
+      lapply(function(chord) {
+        get_parncutt_sonority_analysis(
+          chord,
+          expand_harmonics = TRUE,
+          midi_params = midi_params,
+          parncutt_params = parncutt_params,
+          simple = FALSE
+        )
+      }) %>%
+      (function(x) {
+        get_pitch_distance(
+          x[[1]], x[[2]],
+          parncutt_params = parncutt_params
+        )
+      })
   }
 )
 setMethod(
