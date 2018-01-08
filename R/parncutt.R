@@ -170,15 +170,15 @@ get_parncutt_sonority_analysis <- function(
 #' @param chord_2 The second chord to compare
 #' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
 #' @export
-setGeneric("get_pitch_commonality",
+setGeneric("get_parncutt_pitch_commonality",
            valueClass = "numeric",
            function(chord_1, chord_2,
                     midi_params = get_midi_params(),
                     parncutt_params = get_parncutt_params()) {
-             standardGeneric("get_pitch_commonality")
+             standardGeneric("get_parncutt_pitch_commonality")
            })
 setMethod(
-  f = "get_pitch_commonality",
+  f = "get_parncutt_pitch_commonality",
   signature = c("sonority_analysis", "sonority_analysis"),
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
@@ -193,7 +193,7 @@ setMethod(
     )
   })
 setMethod(
-  f = "get_pitch_commonality",
+  f = "get_parncutt_pitch_commonality",
   signature = c("numeric", "numeric"),
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
@@ -209,7 +209,7 @@ setMethod(
         )
       }) %>%
       (function(x) {
-        get_pitch_commonality(
+        get_parncutt_pitch_commonality(
           x[[1]], x[[2]],
           midi_params = midi_params,
           parncutt_params = parncutt_params
@@ -225,15 +225,15 @@ setMethod(
 #' @param chord_2 The second chord to compare
 #' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
 #' @export
-setGeneric("get_pitch_distance",
+setGeneric("get_parncutt_pitch_distance",
            valueClass = "numeric",
            function(chord_1, chord_2,
                     midi_params = get_midi_params(),
                     parncutt_params = get_parncutt_params()) {
-             standardGeneric("get_pitch_distance")
+             standardGeneric("get_parncutt_pitch_distance")
            })
 setMethod(
-  f = "get_pitch_distance",
+  f = "get_parncutt_pitch_distance",
   signature = c("numeric", "numeric"),
   definition = function(
     chord_1, chord_2,
@@ -251,7 +251,7 @@ setMethod(
         )
       }) %>%
       (function(x) {
-        get_pitch_distance(
+        get_parncutt_pitch_distance(
           x[[1]], x[[2]],
           parncutt_params = parncutt_params
         )
@@ -259,7 +259,7 @@ setMethod(
   }
 )
 setMethod(
-  f = "get_pitch_distance",
+  f = "get_parncutt_pitch_distance",
   signature = c("sonority_analysis", "sonority_analysis"),
   definition = function(chord_1,
                         chord_2,
