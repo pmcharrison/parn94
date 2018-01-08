@@ -83,23 +83,46 @@ setMethod(
 
 #' Analyse sonority
 #'
-#' Analyse a sonority using Parncutt's psychoacoustic models.
+#' Analyse a sonority using Parncutt's psychoacoustic models. All frequency components are rounded to the nearest MIDI note number.
 #' @param pitch_midi Numeric vector of MIDI pitches in the sonority
 #' @param level_dB Numeric vector of sound levels (dB) for these pitches; must either be length 1 or of the same length as \code{pitch_midi}
 #' @param expand_harmonics Boolean scalar; whether or not to expand these pitches to include their implied harmonics
 #' @param simple Whether or not to provide a simplified model output
 #' @export
 get_parncutt_sonority_analysis <- function(
-  pitch_midi,
-  level_dB = NULL,
+  frequency,
+  frequency_scale = "midi",
+  amplitude = 60,
+  dB = TRUE,
   expand_harmonics = TRUE,
   simple = TRUE,
   midi_params = get_midi_params(),
   parncutt_params = get_parncutt_params()
 ) {
-  # Sort out level_dB
-  level_dB <- if (is.null(level_dB)) midi_params$fundamental_level_dB else level_dB
-  level_dB <- HarmonyUtils::rep_to_match(level_dB, pitch_midi)
+  assertthat::assert_that(
+    is.numeric(frequency),
+    assertthat::is.scalar(frequency_scale),
+    frequency_scale %in% c("midi", "Hz")
+  )
+  # Sort out frequency
+  pitch_midi <- (if (frequeny_scale == "midi") {
+    frequency
+  } else {
+    HarmonyUtils::convert_freq_to_midi(
+      frequency,
+      stretched_octave = midi_params$stretched_octave,
+      tuning_ref_Hz = midi_params$tuning_ref_Hz
+    )
+  }) %>% round
+  # Sort out amplitude
+  level_dB <- (if (dB) {
+    amplitude
+  } else {
+    HarmonyUtils::convert_amplitude_to_dB(
+      amplitude,
+      unit_amplitude_in_dB = midi_params$unit_amplitude_in_dB
+    )
+  }) %>% HarmonyUtils::rep_to_match(pitch_midi)
   # Check other inputs
   assertthat::assert_that(
     is.numeric(pitch_midi),

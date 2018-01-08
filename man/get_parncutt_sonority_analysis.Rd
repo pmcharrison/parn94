@@ -4,19 +4,19 @@
 \alias{get_parncutt_sonority_analysis}
 \title{Analyse sonority}
 \usage{
-get_parncutt_sonority_analysis(pitch_midi, level_dB = NULL,
-  expand_harmonics = TRUE, simple = TRUE, midi_params = get_midi_params(),
-  parncutt_params = get_parncutt_params())
+get_parncutt_sonority_analysis(frequency, frequency_scale = "midi",
+  amplitude = 60, dB = TRUE, expand_harmonics = TRUE, simple = TRUE,
+  midi_params = get_midi_params(), parncutt_params = get_parncutt_params())
 }
 \arguments{
-\item{pitch_midi}{Numeric vector of MIDI pitches in the sonority}
-
-\item{level_dB}{Numeric vector of sound levels (dB) for these pitches; must either be length 1 or of the same length as \code{pitch_midi}}
-
 \item{expand_harmonics}{Boolean scalar; whether or not to expand these pitches to include their implied harmonics}
 
 \item{simple}{Whether or not to provide a simplified model output}
+
+\item{pitch_midi}{Numeric vector of MIDI pitches in the sonority}
+
+\item{level_dB}{Numeric vector of sound levels (dB) for these pitches; must either be length 1 or of the same length as \code{pitch_midi}}
 }
 \description{
-Analyse a sonority using Parncutt's psychoacoustic models.
+Analyse a sonority using Parncutt's psychoacoustic models. All frequency components are rounded to the nearest MIDI note number.
 }
