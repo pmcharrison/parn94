@@ -117,3 +117,57 @@ test_that("style", {
   functions <- lsf.str("package:HarmonyParncutt") %>% as.character
   sapply(functions, function(x) expect_true(checkFun(x)))
 })
+
+test_that("get_parncutt_sonority_analysis should be invariant to unit switches", {
+  expect_equal(
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67),
+      frequency_scale = "midi"
+    ),
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67) %>% HarmonyUtils::convert_midi_to_freq(),
+      frequency_scale = "Hz"
+    )
+  )
+  expect_equal(
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67),
+      amplitude = 1,
+      dB = FALSE,
+      midi_params = get_midi_params(unit_amplitude_in_dB = 60)
+    ),
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67),
+      amplitude = 60,
+      dB = TRUE,
+      midi_params = get_midi_params(unit_amplitude_in_dB = 60)
+    )
+  )
+})
+
+test_that("get_parncutt_sonority_analysis should be invariant to expansion of amplitude argument", {
+  expect_equal(
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67),
+      amplitude = 60,
+      dB = TRUE
+    ),
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67),
+      amplitude = c(60, 60, 60),
+      dB = TRUE
+    )
+  )
+  expect_equal(
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67),
+      amplitude = 1,
+      dB = FALSE
+    ),
+    get_parncutt_sonority_analysis(
+      c(60, 64, 67),
+      amplitude = c(1, 1, 1),
+      dB = FALSE
+    )
+  )
+})
