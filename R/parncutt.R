@@ -105,7 +105,7 @@ get_parncutt_sonority_analysis <- function(
     frequency_scale %in% c("midi", "Hz")
   )
   # Sort out frequency
-  pitch_midi <- (if (frequeny_scale == "midi") {
+  pitch_midi <- (if (frequency_scale == "midi") {
     frequency
   } else {
     HarmonyUtils::convert_freq_to_midi(
