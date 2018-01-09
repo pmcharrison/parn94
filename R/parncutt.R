@@ -204,7 +204,10 @@ setMethod(
   signature = c("sonority_analysis", "sonority_analysis"),
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
-                        parncutt_params = get_parncutt_params()) {
+                        parncutt_params = get_parncutt_params(),
+                        cache = TRUE,
+                        cache_root = "cache",
+                        cache_dir = "HarmonyParncutt/get_parncutt_pitch_commonality") {
     cor(
       get_expanded_salience_vector(chord_1,
                                    min_midi = parncutt_params$min_midi,
