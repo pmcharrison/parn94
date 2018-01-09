@@ -107,15 +107,13 @@ get_parncutt_sonority_analysis <- function(
   simple = TRUE,
   midi_params = get_midi_params(),
   parncutt_params = get_parncutt_params(),
-  cache = TRUE,
-  cache_root = "cache",
-  cache_dir = "HarmonyParncutt/get_parncutt_sonority_analysis"
+  cache = TRUE
 ) {
   res <- cacheR::cache(
     fun_name = "get_parncutt_sonority_analysis",
     cache = cache,
-    cache_root = cache_root,
-    cache_dir = cache_dir,
+    cache_root = "cache",
+    cache_dir = "HarmonyParncutt/get_parncutt_sonority_analysis",
     expr = {
       assertthat::assert_that(
         is.numeric(frequency),
@@ -194,9 +192,7 @@ setGeneric("get_parncutt_pitch_commonality",
            function(chord_1, chord_2,
                     midi_params = get_midi_params(),
                     parncutt_params = get_parncutt_params(),
-                    cache = TRUE,
-                    cache_root = "cache",
-                    cache_dir = "HarmonyParncutt/get_parncutt_pitch_commonality") {
+                    cache = TRUE) {
              standardGeneric("get_parncutt_pitch_commonality")
            })
 setMethod(
@@ -205,9 +201,7 @@ setMethod(
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
                         parncutt_params = get_parncutt_params(),
-                        cache = TRUE,
-                        cache_root = "cache",
-                        cache_dir = "HarmonyParncutt/get_parncutt_pitch_commonality") {
+                        cache = TRUE) {
     cor(
       get_expanded_salience_vector(chord_1,
                                    min_midi = parncutt_params$min_midi,
@@ -223,14 +217,12 @@ setMethod(
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
                         parncutt_params = get_parncutt_params(),
-                        cache = TRUE,
-                        cache_root = "cache",
-                        cache_dir = "HarmonyParncutt/get_parncutt_pitch_commonality") {
+                        cache = TRUE) {
     cacheR::cache(
       fun_name = "get_parncutt_pitch_commonality",
       cache = cache,
-      cache_root = cache_root,
-      cache_dir = cache_dir,
+      cache_root = "cache",
+      cache_dir = "HarmonyParncutt/get_parncutt_pitch_commonality",
       expr = expression({
         list(chord_1, chord_2) %>%
           lapply(function(chord) {
@@ -239,7 +231,8 @@ setMethod(
               expand_harmonics = TRUE,
               midi_params = midi_params,
               parncutt_params = parncutt_params,
-              simple = FALSE
+              simple = FALSE,
+              cache = cache
             )
           }) %>%
           (function(x) {
@@ -266,9 +259,7 @@ setGeneric("get_parncutt_pitch_distance",
            function(chord_1, chord_2,
                     midi_params = get_midi_params(),
                     parncutt_params = get_parncutt_params(),
-                    cache = TRUE,
-                    cache_root = "cache",
-                    cache_dir = "HarmonyParncutt/get_parncutt_pitch_distance") {
+                    cache = TRUE) {
              standardGeneric("get_parncutt_pitch_distance")
            })
 setMethod(
@@ -278,15 +269,13 @@ setMethod(
     chord_1, chord_2,
     midi_params = get_midi_params(),
     parncutt_params = get_parncutt_params(),
-    cache = TRUE,
-    cache_root = "cache",
-    cache_dir = "HarmonyParncutt/get_parncutt_pitch_distance"
+    cache = TRUE
   ) {
     cacheR::cache(
       fun_name = "get_parncutt_pitch_distance",
       cache = cache,
-      cache_root = cache_root,
-      cache_dir = cache_dir,
+      cache_root = "cache",
+      cache_dir = "HarmonyParncutt/get_parncutt_pitch_distance",
       expr = expression({
         list(chord_1, chord_2) %>%
           lapply(function(chord) {
@@ -295,7 +284,8 @@ setMethod(
               expand_harmonics = TRUE,
               midi_params = midi_params,
               parncutt_params = parncutt_params,
-              simple = FALSE
+              simple = FALSE,
+              cache = cache
             )
           }) %>%
           (function(x) {
@@ -314,7 +304,8 @@ setMethod(
   definition = function(chord_1,
                         chord_2,
                         midi_params = get_midi_params(),
-                        parncutt_params = get_parncutt_params()) {
+                        parncutt_params = get_parncutt_params(),
+                        cache = TRUE) {
     s1 <- get_expanded_salience_vector(
       chord_1, min_midi = parncutt_params$min_midi, max_midi = parncutt_params$max_midi
     )
