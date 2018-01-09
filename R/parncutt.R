@@ -248,7 +248,10 @@ setGeneric("get_parncutt_pitch_distance",
            valueClass = "numeric",
            function(chord_1, chord_2,
                     midi_params = get_midi_params(),
-                    parncutt_params = get_parncutt_params()) {
+                    parncutt_params = get_parncutt_params(),
+                    cache = TRUE,
+                    cache_root = "cache",
+                    cache_dir = "HarmonyParncutt/get_parncutt_pitch_distance") {
              standardGeneric("get_parncutt_pitch_distance")
            })
 setMethod(
@@ -257,24 +260,35 @@ setMethod(
   definition = function(
     chord_1, chord_2,
     midi_params = get_midi_params(),
-    parncutt_params = get_parncutt_params()
+    parncutt_params = get_parncutt_params(),
+    cache = TRUE,
+    cache_root = "cache",
+    cache_dir = "HarmonyParncutt/get_parncutt_pitch_distance"
   ) {
-    list(chord_1, chord_2) %>%
-      lapply(function(chord) {
-        get_parncutt_sonority_analysis(
-          chord,
-          expand_harmonics = TRUE,
-          midi_params = midi_params,
-          parncutt_params = parncutt_params,
-          simple = FALSE
-        )
-      }) %>%
-      (function(x) {
-        get_parncutt_pitch_distance(
-          x[[1]], x[[2]],
-          parncutt_params = parncutt_params
-        )
+    cacheR::cache(
+      fun_name = "get_parncutt_pitch_distance",
+      cache = cache,
+      cache_root = cache_root,
+      cache_dir = cache_dir,
+      expr = expression({
+        list(chord_1, chord_2) %>%
+          lapply(function(chord) {
+            get_parncutt_sonority_analysis(
+              chord,
+              expand_harmonics = TRUE,
+              midi_params = midi_params,
+              parncutt_params = parncutt_params,
+              simple = FALSE
+            )
+          }) %>%
+          (function(x) {
+            get_parncutt_pitch_distance(
+              x[[1]], x[[2]],
+              parncutt_params = parncutt_params
+            )
+          })
       })
+    )
   }
 )
 setMethod(
