@@ -5,7 +5,9 @@
 \title{Get pitch distance}
 \usage{
 get_parncutt_pitch_distance(chord_1, chord_2, midi_params = get_midi_params(),
-  parncutt_params = get_parncutt_params())
+  parncutt_params = get_parncutt_params(), cache = TRUE,
+  cache_root = "cache",
+  cache_dir = "HarmonyParncutt/get_parncutt_pitch_distance")
 }
 \arguments{
 \item{chord_1}{The first chord to compare}

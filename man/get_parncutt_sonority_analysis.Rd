@@ -6,7 +6,9 @@
 \usage{
 get_parncutt_sonority_analysis(frequency, frequency_scale = "midi",
   amplitude = 60, dB = TRUE, expand_harmonics = TRUE, simple = TRUE,
-  midi_params = get_midi_params(), parncutt_params = get_parncutt_params())
+  midi_params = get_midi_params(), parncutt_params = get_parncutt_params(),
+  cache = TRUE, cache_root = "cache",
+  cache_dir = "HarmonyParncutt/get_parncutt_sonority_analysis")
 }
 \arguments{
 \item{expand_harmonics}{Boolean scalar; whether or not to expand these pitches to include their implied harmonics}
