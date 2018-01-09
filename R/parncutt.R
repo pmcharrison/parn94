@@ -13,6 +13,12 @@ NULL
 NULL
 
 #' @importFrom methods new
+NULL
+
+#' @importFrom cacheR clear_cache
+#' @name clear_cache
+#' @export
+NULL
 
 #' @export
 setClass("sonority_analysis",
@@ -100,61 +106,72 @@ get_parncutt_sonority_analysis <- function(
   expand_harmonics = TRUE,
   simple = TRUE,
   midi_params = get_midi_params(),
-  parncutt_params = get_parncutt_params()
+  parncutt_params = get_parncutt_params(),
+  cache = TRUE,
+  cache_root = "cache",
+  cache_dir = "HarmonyParncutt/get_parncutt_sonority_analysis"
 ) {
-  assertthat::assert_that(
-    is.numeric(frequency),
-    assertthat::is.scalar(frequency_scale),
-    frequency_scale %in% c("midi", "Hz")
-  )
-  # Sort out frequency
-  pitch_midi <- (if (frequency_scale == "midi") {
-    frequency
-  } else {
-    HarmonyUtils::convert_freq_to_midi(
-      frequency,
-      stretched_octave = midi_params$stretched_octave,
-      tuning_ref_Hz = midi_params$tuning_ref_Hz
-    )
-  }) %>% round
-  # Sort out amplitude
-  level_dB <- (if (dB) {
-    amplitude
-  } else {
-    HarmonyUtils::convert_amplitude_to_dB(
-      amplitude,
-      unit_amplitude_in_dB = midi_params$unit_amplitude_in_dB
-    )
-  }) %>% HarmonyUtils::rep_to_match(pitch_midi)
-  # Check other inputs
-  assertthat::assert_that(
-    is.numeric(pitch_midi),
-    is.numeric(level_dB),
-    length(level_dB) == length(pitch_midi),
-    assertthat::is.scalar(simple), is.logical(simple)
-  )
-  # Expand harmonics if requested
-  if (expand_harmonics) {
-    tmp <- HarmonyUtils::expand_harmonics(
-      frequency = pitch_midi,
-      amplitude = level_dB,
-      dB = TRUE,
-      frequency_scale = "midi",
-      num_harmonics = midi_params$num_harmonics,
-      roll_off = midi_params$roll_off
-    )
-    tmp <- tmp[tmp$frequency >= parncutt_params$min_midi &
-                 tmp$frequency <= parncutt_params$max_midi, ]
-    pitch_midi <- tmp$frequency
-    level_dB <- tmp$amplitude
-  }
-  # Compute the analysis
-  res <- new(
-    "sonority_analysis",
-    pitch_midi = pitch_midi,
-    level = level_dB,
-    midi_params = midi_params,
-    parncutt_params = parncutt_params
+  res <- cacheR::cache(
+    fun_name = "get_parncutt_sonority_analysis",
+    cache = cache,
+    cache_root = cache_root,
+    cache_dir = cache_dir,
+    expr = {
+      assertthat::assert_that(
+        is.numeric(frequency),
+        assertthat::is.scalar(frequency_scale),
+        frequency_scale %in% c("midi", "Hz")
+      )
+      # Sort out frequency
+      pitch_midi <- (if (frequency_scale == "midi") {
+        frequency
+      } else {
+        HarmonyUtils::convert_freq_to_midi(
+          frequency,
+          stretched_octave = midi_params$stretched_octave,
+          tuning_ref_Hz = midi_params$tuning_ref_Hz
+        )
+      }) %>% round
+      # Sort out amplitude
+      level_dB <- (if (dB) {
+        amplitude
+      } else {
+        HarmonyUtils::convert_amplitude_to_dB(
+          amplitude,
+          unit_amplitude_in_dB = midi_params$unit_amplitude_in_dB
+        )
+      }) %>% HarmonyUtils::rep_to_match(pitch_midi)
+      # Check other inputs
+      assertthat::assert_that(
+        is.numeric(pitch_midi),
+        is.numeric(level_dB),
+        length(level_dB) == length(pitch_midi),
+        assertthat::is.scalar(simple), is.logical(simple)
+      )
+      # Expand harmonics if requested
+      if (expand_harmonics) {
+        tmp <- HarmonyUtils::expand_harmonics(
+          frequency = pitch_midi,
+          amplitude = level_dB,
+          dB = TRUE,
+          frequency_scale = "midi",
+          num_harmonics = midi_params$num_harmonics,
+          roll_off = midi_params$roll_off
+        )
+        tmp <- tmp[tmp$frequency >= parncutt_params$min_midi &
+                     tmp$frequency <= parncutt_params$max_midi, ]
+        pitch_midi <- tmp$frequency
+        level_dB <- tmp$amplitude
+      }
+      # Compute the analysis
+      res <- new(
+        "sonority_analysis",
+        pitch_midi = pitch_midi,
+        level = level_dB,
+        midi_params = midi_params,
+        parncutt_params = parncutt_params
+      )
+    }
   )
   if (simple) {
     list(
@@ -164,7 +181,6 @@ get_parncutt_sonority_analysis <- function(
     )
   } else res
 }
-
 
 #' Get pitch commonality
 #'
