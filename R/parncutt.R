@@ -91,9 +91,6 @@ setMethod(
 #' @param level_dB Numeric vector of sound levels (dB) for these pitches; must either be length 1 or of the same length as \code{pitch_midi}
 #' @param expand_harmonics Boolean scalar; whether or not to expand these pitches to include their implied harmonics
 #' @param simple Whether or not to provide a simplified model output
-#' @param cache If \code{TRUE}, then results will be cached to avoid repeated computation.
-#' @param cache_root Path to the top-level directory used to store cache results; typically caches from other packages/functions will also be stored in this directory.
-#' @param cache_dir Path to the low-level directory used to store cache results for this particular function, relative to \code{cache_root}.
 #' @export
 get_parncutt_sonority_analysis <- function(
   frequency,
@@ -103,104 +100,62 @@ get_parncutt_sonority_analysis <- function(
   expand_harmonics = TRUE,
   simple = TRUE,
   midi_params = get_midi_params(),
-  parncutt_params = get_parncutt_params(),
-  cache = TRUE,
-  cache_root = "cache",
-  cache_dir = "HarmonyParncutt/get_parncutt_sonority_analysis"
+  parncutt_params = get_parncutt_params()
 ) {
   assertthat::assert_that(
     is.numeric(frequency),
     assertthat::is.scalar(frequency_scale),
-    frequency_scale %in% c("midi", "Hz"),
-    assertthat::is.scalar(cache),
-    is.logical(cache),
-    assertthat::is.scalar(cache_root),
-    is.character(cache_root),
-    assertthat::is.scalar(cache_dir),
-    is.character(cache_dir)
+    frequency_scale %in% c("midi", "Hz")
   )
-  res_cache <- if (cache) {
-    # Make sure that no assignments happen before this line, else it won't
-    # reflect just the function's arguments
-    args <- as.list(environment()) %>%
-      (function(x) x[order(names(x))]) %>%
-      # Ignore certain arguments that are irrelevant for caching
-      (function(x) x[setdiff(names(x), c(
-        "simple", "cache_root", "cache_dir"
-      ))])
-    fun_name <- match.call()[[1]]
-    cache_file_path <- file.path(cache_root, cache_dir, paste(digest::digest(args), ".RDS", sep = ""))
-    if (file.exists(cache_file_path)) {
-      cache_file_path %>%
-        readRDS %>%
-        (function(dat) {
-          if (identical(dat$fun_name, fun_name) &&
-              identical(dat$args, args)) {
-            dat$res
-          }
-        })
-    }
-  }
-  res <- if (!is.null(res_cache)) {
-    res_cache
+  # Sort out frequency
+  pitch_midi <- (if (frequency_scale == "midi") {
+    frequency
   } else {
-    # Sort out frequency
-    pitch_midi <- (if (frequency_scale == "midi") {
-      frequency
-    } else {
-      HarmonyUtils::convert_freq_to_midi(
-        frequency,
-        stretched_octave = midi_params$stretched_octave,
-        tuning_ref_Hz = midi_params$tuning_ref_Hz
-      )
-    }) %>% round
-    # Sort out amplitude
-    level_dB <- (if (dB) {
-      amplitude
-    } else {
-      HarmonyUtils::convert_amplitude_to_dB(
-        amplitude,
-        unit_amplitude_in_dB = midi_params$unit_amplitude_in_dB
-      )
-    }) %>% HarmonyUtils::rep_to_match(pitch_midi)
-    # Check other inputs
-    assertthat::assert_that(
-      is.numeric(pitch_midi),
-      is.numeric(level_dB),
-      length(level_dB) == length(pitch_midi),
-      assertthat::is.scalar(simple), is.logical(simple)
+    HarmonyUtils::convert_freq_to_midi(
+      frequency,
+      stretched_octave = midi_params$stretched_octave,
+      tuning_ref_Hz = midi_params$tuning_ref_Hz
     )
-    # Expand harmonics if requested
-    if (expand_harmonics) {
-      tmp <- HarmonyUtils::expand_harmonics(
-        frequency = pitch_midi,
-        amplitude = level_dB,
-        dB = TRUE,
-        frequency_scale = "midi",
-        num_harmonics = midi_params$num_harmonics,
-        roll_off = midi_params$roll_off
-      )
-      tmp <- tmp[tmp$frequency >= parncutt_params$min_midi &
-                   tmp$frequency <= parncutt_params$max_midi, ]
-      pitch_midi <- tmp$frequency
-      level_dB <- tmp$amplitude
-    }
-    # Compute the analysis
-    res <- new(
-      "sonority_analysis",
-      pitch_midi = pitch_midi,
-      level = level_dB,
-      midi_params = midi_params,
-      parncutt_params = parncutt_params
+  }) %>% round
+  # Sort out amplitude
+  level_dB <- (if (dB) {
+    amplitude
+  } else {
+    HarmonyUtils::convert_amplitude_to_dB(
+      amplitude,
+      unit_amplitude_in_dB = midi_params$unit_amplitude_in_dB
     )
-    # Save to cache if appopriate
-    if (cache) {
-      R.utils::mkdirs(dirname(cache_file_path))
-      saveRDS(list(fun_name = fun_name, args = args, res = res),
-              cache_file_path)
-    }
-    res
+  }) %>% HarmonyUtils::rep_to_match(pitch_midi)
+  # Check other inputs
+  assertthat::assert_that(
+    is.numeric(pitch_midi),
+    is.numeric(level_dB),
+    length(level_dB) == length(pitch_midi),
+    assertthat::is.scalar(simple), is.logical(simple)
+  )
+  # Expand harmonics if requested
+  if (expand_harmonics) {
+    tmp <- HarmonyUtils::expand_harmonics(
+      frequency = pitch_midi,
+      amplitude = level_dB,
+      dB = TRUE,
+      frequency_scale = "midi",
+      num_harmonics = midi_params$num_harmonics,
+      roll_off = midi_params$roll_off
+    )
+    tmp <- tmp[tmp$frequency >= parncutt_params$min_midi &
+                 tmp$frequency <= parncutt_params$max_midi, ]
+    pitch_midi <- tmp$frequency
+    level_dB <- tmp$amplitude
   }
+  # Compute the analysis
+  res <- new(
+    "sonority_analysis",
+    pitch_midi = pitch_midi,
+    level = level_dB,
+    midi_params = midi_params,
+    parncutt_params = parncutt_params
+  )
   if (simple) {
     list(
       pure_sonorousness = res@pure_sonorousness,
