@@ -17,13 +17,9 @@ Imports: assertthat,
     methods,
     parallel,
     magrittr,
-<<<<<<< HEAD
     HarmonyUtils (>= 0.3.0),
     digest,
     R.utils,
     cacheR
-=======
-    HarmonyUtils (>= 0.3.0)
->>>>>>> parent of 9a13df4... Implementing caching for get_sonority_analysis
 VignetteBuilder: knitr
 Remotes: bitbucket::pmcharrison/harmonyutils,bitbucket::pmcharrison/cacher
