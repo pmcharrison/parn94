@@ -19,5 +19,7 @@ Imports: assertthat,
     magrittr,
     HarmonyUtils (>= 0.3.0),
     digest,
-    R.utils
+    R.utils,
+    cacheR
 VignetteBuilder: knitr
+Remotes: bitbucket::pmcharrison/harmonyutils,bitbucket::pmcharrison/cacher
