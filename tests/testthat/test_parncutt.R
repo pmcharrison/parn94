@@ -80,55 +80,55 @@ test_that("get_expanded_salience_vector", {
 
 test_that("get_parncutt_pitch_distance", {
   expect_equal(
-    get_parncutt_pitch_distance(c(60, 64, 67), c(60, 64, 67)),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(60, 64, 67), cache = FALSE),
     0
   )
   expect_gt(
     # Presumably C# major should be closer in pitch to
     # C major than e.g. F major
-    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72)),
-    get_parncutt_pitch_distance(c(60, 64, 67), c(61, 65, 68))
+    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72), cache = FALSE),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(61, 65, 68), cache = FALSE)
   )
   # These numbers are taken from previous versions of this package,
   # and have not been compared to other literature/software
   expect_equal(
-    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72)),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72), cache = FALSE),
     3.86723877405512
   )
   expect_equal(
-    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 63, 83)),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 63, 83), cache = FALSE),
     37.8133050960468
   )
 })
 
 test_that("get_parncutt_pitch_commonality", {
   expect_equal(
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(60, 64, 67)),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(60, 64, 67), cache = FALSE),
     1
   )
   expect_gt(
     # G major should be closer to C major than F# major is to C major
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67)),
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 66, 68))
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 66, 68), cache = FALSE)
   )
   expect_gt(
     # G major vs C# major
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67)),
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 65, 68))
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 65, 68), cache = FALSE)
   )
   expect_gt(
     # G major vs C transposed
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79)),
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67))
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE)
   )
   # These numbers are taken from previous versions of this package,
   # and have not been compared to other literature/software
   expect_equal(
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79)),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
     0.894901857522212
   )
   expect_equal(
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67)),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE),
     0.349625432417314
   )
 })
@@ -142,11 +142,13 @@ test_that("get_parncutt_sonority_analysis should be invariant to unit switches",
   expect_equal(
     get_parncutt_sonority_analysis(
       c(60, 64, 67),
-      frequency_scale = "midi"
+      frequency_scale = "midi",
+      cache = FALSE
     ),
     get_parncutt_sonority_analysis(
       c(60, 64, 67) %>% HarmonyUtils::convert_midi_to_freq(),
-      frequency_scale = "Hz"
+      frequency_scale = "Hz",
+      cache = FALSE
     )
   )
   expect_equal(
@@ -154,13 +156,15 @@ test_that("get_parncutt_sonority_analysis should be invariant to unit switches",
       c(60, 64, 67),
       amplitude = 1,
       dB = FALSE,
-      midi_params = get_midi_params(unit_amplitude_in_dB = 60)
+      midi_params = get_midi_params(unit_amplitude_in_dB = 60),
+      cache = FALSE
     ),
     get_parncutt_sonority_analysis(
       c(60, 64, 67),
       amplitude = 60,
       dB = TRUE,
-      midi_params = get_midi_params(unit_amplitude_in_dB = 60)
+      midi_params = get_midi_params(unit_amplitude_in_dB = 60),
+      cache = FALSE
     )
   )
 })
@@ -170,24 +174,28 @@ test_that("get_parncutt_sonority_analysis should be invariant to expansion of am
     get_parncutt_sonority_analysis(
       c(60, 64, 67),
       amplitude = 60,
-      dB = TRUE
+      dB = TRUE,
+      cache = FALSE
     ),
     get_parncutt_sonority_analysis(
       c(60, 64, 67),
       amplitude = c(60, 60, 60),
-      dB = TRUE
+      dB = TRUE,
+      cache = FALSE
     )
   )
   expect_equal(
     get_parncutt_sonority_analysis(
       c(60, 64, 67),
       amplitude = 1,
-      dB = FALSE
+      dB = FALSE,
+      cache = FALSE
     ),
     get_parncutt_sonority_analysis(
       c(60, 64, 67),
       amplitude = c(1, 1, 1),
-      dB = FALSE
+      dB = FALSE,
+      cache = FALSE
     )
   )
 })
