@@ -99,6 +99,11 @@ test_that("get_parncutt_pitch_distance", {
     get_parncutt_pitch_distance(c(60, 64, 67), c(65, 63, 83), cache = FALSE),
     37.8133050960468
   )
+  # It shouldn't make a difference whether you cache or not
+  expect_equal(
+    get_parncutt_pitch_distance(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(48, 76, 79), cache = TRUE)
+  )
 })
 
 test_that("get_parncutt_pitch_commonality", {
@@ -130,6 +135,11 @@ test_that("get_parncutt_pitch_commonality", {
   expect_equal(
     get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE),
     0.349625432417314
+  )
+  # It shouldn't make a difference whether you cache or not
+  expect_equal(
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = TRUE)
   )
 })
 
@@ -199,3 +209,5 @@ test_that("get_parncutt_sonority_analysis should be invariant to expansion of am
     )
   )
 })
+
+clear_cache()
