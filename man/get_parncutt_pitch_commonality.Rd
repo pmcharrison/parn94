@@ -6,8 +6,7 @@
 \usage{
 get_parncutt_pitch_commonality(chord_1, chord_2,
   midi_params = get_midi_params(), parncutt_params = get_parncutt_params(),
-  cache = TRUE, cache_root = "cache",
-  cache_dir = "HarmonyParncutt/get_parncutt_pitch_commonality")
+  cache_inner = TRUE, cache_outer = FALSE)
 }
 \arguments{
 \item{chord_1}{The first chord to compare}
