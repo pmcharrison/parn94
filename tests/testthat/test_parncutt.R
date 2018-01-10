@@ -80,66 +80,66 @@ test_that("get_expanded_salience_vector", {
 
 test_that("get_parncutt_pitch_distance", {
   expect_equal(
-    get_parncutt_pitch_distance(c(60, 64, 67), c(60, 64, 67), cache = FALSE),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(60, 64, 67), cache_outer = FALSE),
     0
   )
   expect_gt(
     # Presumably C# major should be closer in pitch to
     # C major than e.g. F major
-    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72), cache = FALSE),
-    get_parncutt_pitch_distance(c(60, 64, 67), c(61, 65, 68), cache = FALSE)
+    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72), cache_outer = FALSE),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(61, 65, 68), cache_outer = FALSE)
   )
   # These numbers are taken from previous versions of this package,
   # and have not been compared to other literature/software
   expect_equal(
-    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72), cache = FALSE),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 69, 72), cache_outer = FALSE),
     3.86723877405512
   )
   expect_equal(
-    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 63, 83), cache = FALSE),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(65, 63, 83), cache_outer = FALSE),
     37.8133050960468
   )
   # It shouldn't make a difference whether you cache or not
   expect_equal(
-    get_parncutt_pitch_distance(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
-    get_parncutt_pitch_distance(c(60, 64, 67), c(48, 76, 79), cache = TRUE)
+    get_parncutt_pitch_distance(c(60, 64, 67), c(48, 76, 79), cache_outer = FALSE),
+    get_parncutt_pitch_distance(c(60, 64, 67), c(48, 76, 79), cache_outer = TRUE)
   )
 })
 
 test_that("get_parncutt_pitch_commonality", {
   expect_equal(
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(60, 64, 67), cache = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(60, 64, 67), cache_outer = FALSE),
     1
   )
   expect_gt(
     # G major should be closer to C major than F# major is to C major
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE),
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 66, 68), cache = FALSE)
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache_outer = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 66, 68), cache_outer = FALSE)
   )
   expect_gt(
     # G major vs C# major
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE),
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 65, 68), cache = FALSE)
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache_outer = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(61, 65, 68), cache_outer = FALSE)
   )
   expect_gt(
     # G major vs C transposed
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE)
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache_outer = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache_outer = FALSE)
   )
   # These numbers are taken from previous versions of this package,
   # and have not been compared to other literature/software
   expect_equal(
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache_outer = FALSE),
     0.894901857522212
   )
   expect_equal(
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(59, 62, 67), cache_outer = FALSE),
     0.349625432417314
   )
   # It shouldn't make a difference whether you cache or not
   expect_equal(
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = FALSE),
-    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache = TRUE)
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache_outer = FALSE),
+    get_parncutt_pitch_commonality(c(60, 64, 67), c(48, 76, 79), cache_outer = TRUE)
   )
 })
 
