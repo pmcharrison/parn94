@@ -210,4 +210,31 @@ test_that("get_parncutt_sonority_analysis should be invariant to expansion of am
   )
 })
 
+test_that("Cases where there are too many tones masking each other, producing an empty complex sonority", {
+  chord_1 <-  c(57, 60, 61, 62, 64, 65)
+  chord_2 <-  c(57, 60, 61, 62, 63, 64, 65)
+  expect_equal(
+    get_parncutt_sonority_analysis(
+      chord_1
+    ),
+    list(
+      pure_sonorousness = 0,
+      complex_sonorousness = 0,
+      multiplicity = as.numeric(NA)
+    )
+  )
+  expect_equal(
+    get_parncutt_pitch_commonality(
+      chord_1, chord_2
+    ),
+    as.numeric(NA)
+  )
+  expect_equal(
+    get_parncutt_pitch_distance(
+      chord_1, chord_2
+    ),
+    as.numeric(NA)
+  )
+})
+
 clear_cache()

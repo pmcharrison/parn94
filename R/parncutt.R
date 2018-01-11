@@ -58,9 +58,6 @@ setMethod(
       midi_params = midi_params,
       parncutt_params = parncutt_params
     )
-    if (nrow(.Object@pure_spectrum) == 0) {
-      stop("Parncutt's sonority analysis found no audible components in sonority, don't know how to proceed.")
-    }
     .Object@complex_spectrum <- get_complex_spectrum(
       pitch_midi = .Object@pure_spectrum$pitch_midi,
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
@@ -204,14 +201,21 @@ setMethod(
                         parncutt_params = get_parncutt_params(),
                         cache_inner = TRUE,
                         cache_outer = FALSE) {
-    cor(
-      get_expanded_salience_vector(chord_1,
-                                   min_midi = parncutt_params$min_midi,
-                                   max_midi = parncutt_params$max_midi),
-      get_expanded_salience_vector(chord_2,
-                                   min_midi = parncutt_params$min_midi,
-                                   max_midi = parncutt_params$max_midi)
-    )
+    if (
+      chord_1@complex_sonorousness == 0 ||
+      chord_2@complex_sonorousness == 0
+    ) {
+      as.numeric(NA)
+    } else {
+      cor(
+        get_expanded_salience_vector(chord_1,
+                                     min_midi = parncutt_params$min_midi,
+                                     max_midi = parncutt_params$max_midi),
+        get_expanded_salience_vector(chord_2,
+                                     min_midi = parncutt_params$min_midi,
+                                     max_midi = parncutt_params$max_midi)
+      )
+    }
   })
 setMethod(
   f = "get_parncutt_pitch_commonality",
@@ -312,32 +316,37 @@ setMethod(
                         parncutt_params = get_parncutt_params(),
                         cache_inner = TRUE,
                         cache_outer = FALSE) {
-    s1 <- get_expanded_salience_vector(
-      chord_1, min_midi = parncutt_params$min_midi, max_midi = parncutt_params$max_midi
-    )
-    s2 <- get_expanded_salience_vector(
-      chord_2, min_midi = parncutt_params$min_midi, max_midi = parncutt_params$max_midi
-    )
-    # We define some matrices that will allow us to vectorise our calculation -
-    # see Equation 17 of Parncutt & Strasburger to see how this works.
-    # Element [i, j] of each matrix corresponds to one combination of P / P'
-    # in Equation 17.
-    dim <- length(s1)
-    m1 <- matrix(data = rep(seq(from = parncutt_params$min_midi,
-                                to = parncutt_params$max_midi),
-                            each = dim),
-                 nrow = dim, byrow = TRUE)
-    m2 <- matrix(data = rep(seq(from = parncutt_params$min_midi,
-                                to = parncutt_params$max_midi),
-                            each = dim),
-                 nrow = dim, byrow = FALSE)
-    dist <- abs(m1 - m2)
-    s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
-    s2_mat <- matrix(data = rep(s2, each = dim), nrow = dim, byrow = FALSE)
+    if (chord_1@complex_sonorousness == 0 ||
+        chord_2@complex_sonorousness == 0) {
+      as.numeric(NA)
+    } else {
+      s1 <- get_expanded_salience_vector(
+        chord_1, min_midi = parncutt_params$min_midi, max_midi = parncutt_params$max_midi
+      )
+      s2 <- get_expanded_salience_vector(
+        chord_2, min_midi = parncutt_params$min_midi, max_midi = parncutt_params$max_midi
+      )
+      # We define some matrices that will allow us to vectorise our calculation -
+      # see Equation 17 of Parncutt & Strasburger to see how this works.
+      # Element [i, j] of each matrix corresponds to one combination of P / P'
+      # in Equation 17.
+      dim <- length(s1)
+      m1 <- matrix(data = rep(seq(from = parncutt_params$min_midi,
+                                  to = parncutt_params$max_midi),
+                              each = dim),
+                   nrow = dim, byrow = TRUE)
+      m2 <- matrix(data = rep(seq(from = parncutt_params$min_midi,
+                                  to = parncutt_params$max_midi),
+                              each = dim),
+                   nrow = dim, byrow = FALSE)
+      dist <- abs(m1 - m2)
+      s1_mat <- matrix(data = rep(s1, each = dim), nrow = dim, byrow = TRUE)
+      s2_mat <- matrix(data = rep(s2, each = dim), nrow = dim, byrow = FALSE)
 
-    sum(s1_mat * s2_mat * dist) -
-      sqrt(sum(s1_mat * t(s1_mat) * dist) *
-             sum(t(s2_mat) * s2_mat * dist))
+      sum(s1_mat * s2_mat * dist) -
+        sqrt(sum(s1_mat * t(s1_mat) * dist) *
+               sum(t(s2_mat) * s2_mat * dist))
+    }
   }
 )
 
@@ -561,23 +570,31 @@ get_pure_sonorousness <- function(pure_tone_audibility, k_p) {
 #' @return Complex sonorousness, a numeric scalar
 #' @export
 get_complex_sonorousness <- function(complex_tone_audibility, k_c) {
-  k_c * max(complex_tone_audibility)
+  if (length(complex_tone_audibility) == 0) {
+    0
+  } else {
+    k_c * max(complex_tone_audibility)
+  }
 }
 
 #' Get multiplicity
 #'
 #' Gets the multiplicity of a sound from its combined (pure and complex) audibilities.
-#' Represents Equations 14 and 15 from Parncutt & Strasburger (1994)
+#' Represents Equations 14 and 15 from Parncutt & Strasburger (1994). Returns NA if there are no non-zero combined audibilities.
 #' @param combined_audibility Numeric vector of combined audibilities as derived in Equation 11 of Parncutt & Strasburger (1994)
 #' @param k_s Numeric scalar, parameter from Parncutt & Strasburger (1994)
 #' @return Numeric scalar corresponding to the multiplicity of the sonority
 #' @export
 get_multiplicity <- function(combined_audibility,
                              k_s) {
-  a_max <- max(combined_audibility)
-  m_prime <- sum(combined_audibility) / a_max
-  m <- m_prime ^ k_s
-  m
+  if (length(combined_audibility) == 0) {
+    as.numeric(NA)
+  } else {
+    a_max <- max(combined_audibility)
+    m_prime <- sum(combined_audibility) / a_max
+    m <- m_prime ^ k_s
+    m
+  }
 }
 
 #' Get combined spectrum
@@ -623,11 +640,15 @@ get_combined_spectrum <- function(pure_midi_pitch,
 #' @return Numeric vector of saliences of the same length as \code{combined_audibility}, giving the salience of each respective tone.
 #' @export
 get_tone_salience <- function(combined_audibility, k_s) {
-  a_max <- max(combined_audibility)
-  m_prime <- sum(combined_audibility) / a_max
-  m <- m_prime ^ k_s
-  (combined_audibility / a_max) *
-    (m / m_prime)
+  if (length(combined_audibility) == 0) {
+    numeric()
+  } else {
+    a_max <- max(combined_audibility)
+    m_prime <- sum(combined_audibility) / a_max
+    m <- m_prime ^ k_s
+    (combined_audibility / a_max) *
+      (m / m_prime)
+  }
 }
 
 
