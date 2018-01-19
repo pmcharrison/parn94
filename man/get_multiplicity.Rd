@@ -16,5 +16,5 @@ Numeric scalar corresponding to the multiplicity of the sonority
 }
 \description{
 Gets the multiplicity of a sound from its combined (pure and complex) audibilities.
-Represents Equations 14 and 15 from Parncutt & Strasburger (1994)
+Represents Equations 14 and 15 from Parncutt & Strasburger (1994). Returns NA if there are no non-zero combined audibilities.
 }
