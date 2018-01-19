@@ -104,11 +104,15 @@ get_parncutt_sonority_analysis <- function(
   simple = TRUE,
   midi_params = get_midi_params(),
   parncutt_params = get_parncutt_params(),
-  cache = TRUE
+  cache = TRUE,
+  cache_parncutt_sonority_analysis = NULL
 ) {
   res <- cacheR::cache(
     fun_name = "get_parncutt_sonority_analysis",
-    cache = cache,
+    cache = if (cache &&
+                !is.null(cache_parncutt_sonority_analysis)) {
+      cache_parncutt_sonority_analysis
+    } else cache,
     cache_root = "cache",
     cache_dir = "HarmonyParncutt/get_parncutt_sonority_analysis",
     expr = {
@@ -190,7 +194,8 @@ setGeneric("get_parncutt_pitch_commonality",
                     midi_params = get_midi_params(),
                     parncutt_params = get_parncutt_params(),
                     cache_inner = TRUE,
-                    cache_outer = FALSE) {
+                    cache_outer = FALSE,
+                    cache_parncutt_sonority_analysis = NULL) {
              standardGeneric("get_parncutt_pitch_commonality")
            })
 setMethod(
@@ -200,7 +205,8 @@ setMethod(
                         midi_params = get_midi_params(),
                         parncutt_params = get_parncutt_params(),
                         cache_inner = TRUE,
-                        cache_outer = FALSE) {
+                        cache_outer = FALSE,
+                        cache_parncutt_sonority_analysis = NULL) {
     if (
       chord_1@complex_sonorousness == 0 ||
       chord_2@complex_sonorousness == 0
@@ -224,7 +230,8 @@ setMethod(
                         midi_params = get_midi_params(),
                         parncutt_params = get_parncutt_params(),
                         cache_inner = TRUE,
-                        cache_outer = FALSE) {
+                        cache_outer = FALSE,
+                        cache_parncutt_sonority_analysis = NULL) {
     cacheR::cache(
       fun_name = "get_parncutt_pitch_commonality",
       cache = cache_outer,
@@ -239,7 +246,9 @@ setMethod(
               midi_params = midi_params,
               parncutt_params = parncutt_params,
               simple = FALSE,
-              cache = cache_inner
+              cache = cache_inner,
+              cache_parncutt_sonority_analysis =
+                cache_parncutt_sonority_analysis
             )
           }) %>%
           (function(x) {
@@ -267,7 +276,8 @@ setGeneric("get_parncutt_pitch_distance",
                     midi_params = get_midi_params(),
                     parncutt_params = get_parncutt_params(),
                     cache_inner = TRUE,
-                    cache_outer = FALSE) {
+                    cache_outer = FALSE,
+                    cache_parncutt_sonority_analysis = NULL) {
              standardGeneric("get_parncutt_pitch_distance")
            })
 setMethod(
@@ -278,7 +288,8 @@ setMethod(
     midi_params = get_midi_params(),
     parncutt_params = get_parncutt_params(),
     cache_inner = TRUE,
-    cache_outer = FALSE
+    cache_outer = FALSE,
+    cache_parncutt_sonority_analysis = NULL
   ) {
     cacheR::cache(
       fun_name = "get_parncutt_pitch_distance",
@@ -294,7 +305,9 @@ setMethod(
               midi_params = midi_params,
               parncutt_params = parncutt_params,
               simple = FALSE,
-              cache = cache_inner
+              cache = cache_inner,
+              cache_parncutt_sonority_analysis =
+                cache_parncutt_sonority_analysis
             )
           }) %>%
           (function(x) {
