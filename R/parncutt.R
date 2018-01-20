@@ -109,10 +109,8 @@ get_parncutt_sonority_analysis <- function(
 ) {
   res <- cacheR::cache(
     fun_name = "get_parncutt_sonority_analysis",
-    cache = if (cache &&
-                !is.null(cache_parncutt_sonority_analysis)) {
-      cache_parncutt_sonority_analysis
-    } else cache,
+    cache = cache,
+    cache_env = cache_parncutt_sonority_analysis,
     cache_root = "cache",
     cache_dir = "HarmonyParncutt/get_parncutt_sonority_analysis",
     expr = {
