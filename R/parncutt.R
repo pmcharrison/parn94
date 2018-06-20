@@ -29,7 +29,7 @@ setClass("sonority_analysis",
            pure_spectrum = "null_or_df",
            complex_spectrum = "null_or_df",
            combined_spectrum = "null_or_df",
-           pure_sonorousness = "null_or_numeric",
+           pure_sonorousness = "numeric",
            complex_sonorousness = "null_or_numeric",
            multiplicity = "null_or_numeric"))
 
@@ -79,7 +79,7 @@ setMethod(
     .Object@pure_sonorousness <- if (parncutt_params$auditory_model) get_pure_sonorousness(
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
       k_p = parncutt_params$k_p
-    )
+    ) else as.numeric(NA)
     .Object@complex_sonorousness <- get_complex_sonorousness(
       complex_tone_audibility = .Object@complex_spectrum$complex_tone_audibility,
       k_c = parncutt_params$k_c,
