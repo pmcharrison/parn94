@@ -20,15 +20,18 @@ NULL
 #' @export
 NULL
 
+setClassUnion("null_or_df", members = c("NULL", "data.frame"))
+setClassUnion("null_or_numeric", members = c("NULL", "numeric"))
+
 #' @export
 setClass("sonority_analysis",
          slots = list(
-           pure_spectrum = "data.frame",
-           complex_spectrum = "data.frame",
-           combined_spectrum = "data.frame",
-           pure_sonorousness = "numeric",
-           complex_sonorousness = "numeric",
-           multiplicity = "numeric"))
+           pure_spectrum = "null_or_df",
+           complex_spectrum = "null_or_df",
+           combined_spectrum = "null_or_df",
+           pure_sonorousness = "null_or_numeric",
+           complex_sonorousness = "null_or_numeric",
+           multiplicity = "null_or_numeric"))
 
 #' Make new sonority analysis object
 #'
@@ -52,35 +55,40 @@ setMethod(
       length(pitch_midi) == length(level),
       !anyDuplicated(pitch_midi)
     )
-    .Object@pure_spectrum <- get_pure_spectrum(
+    .Object@pure_spectrum <- if (parncutt_params$auditory_model) get_pure_spectrum(
       pitch_midi = pitch_midi,
       level = level,
       midi_params = midi_params,
       parncutt_params = parncutt_params
     )
     .Object@complex_spectrum <- get_complex_spectrum(
-      pitch_midi = .Object@pure_spectrum$pitch_midi,
-      pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
+      pitch_midi = if (parncutt_params$auditory_model)
+        .Object@pure_spectrum$pitch_midi else pitch_midi,
+      pure_tone_audibility = if (parncutt_params$auditory_model)
+        .Object@pure_spectrum$pure_tone_audibility else level,
       midi_params = midi_params,
       parncutt_params = parncutt_params
     )
-    .Object@combined_spectrum <- get_combined_spectrum(
+    .Object@combined_spectrum <- if (parncutt_params$auditory_model) get_combined_spectrum(
       pure_midi_pitch = .Object@pure_spectrum$pitch_midi,
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
       complex_midi_pitch = .Object@complex_spectrum$pitch_midi,
       complex_tone_audibility = .Object@complex_spectrum$complex_tone_audibility,
       k_s = parncutt_params$k_s
     )
-    .Object@pure_sonorousness <- get_pure_sonorousness(
+    .Object@pure_sonorousness <- if (parncutt_params$auditory_model) get_pure_sonorousness(
       pure_tone_audibility = .Object@pure_spectrum$pure_tone_audibility,
       k_p = parncutt_params$k_p
     )
     .Object@complex_sonorousness <- get_complex_sonorousness(
       complex_tone_audibility = .Object@complex_spectrum$complex_tone_audibility,
-      k_c = parncutt_params$k_c
+      k_c = parncutt_params$k_c,
+      peak_method = parncutt_params$peak_method
     )
     .Object@multiplicity <- get_multiplicity(
-      combined_audibility = .Object@combined_spectrum$combined_audibility,
+      combined_audibility = if (parncutt_params$auditory_model)
+        .Object@combined_spectrum$combined_audibility else
+          .Object@complex_spectrum$complex_tone_audibility,
       k_s = parncutt_params$k_s
     )
     return(.Object)
@@ -580,12 +588,46 @@ get_pure_sonorousness <- function(pure_tone_audibility, k_p) {
 #' @param k_c Parncutt & Strasburger (1994) set this to 0.2 (p. 105)
 #' @return Complex sonorousness, a numeric scalar
 #' @export
-get_complex_sonorousness <- function(complex_tone_audibility, k_c) {
+get_complex_sonorousness <- function(complex_tone_audibility, k_c, peak_method) {
+  if (peak_method == "peak") {
+    get_complex_sonorousness.peak(complex_tone_audibility, k_c)
+  } else if (peak_method == "kl") {
+    get_complex_sonorousness.kl(complex_tone_audibility)
+  } else if (peak_method == "sum") {
+    get_complex_sonorousness.sum(complex_tone_audibility)
+  } else stop("unknown peak_method")
+}
+
+get_complex_sonorousness.peak <- function(complex_tone_audibility, k_c) {
   if (length(complex_tone_audibility) == 0) {
     0
   } else {
     k_c * max(complex_tone_audibility)
   }
+}
+
+#' Get complex sonorousness (KL version)
+#'
+#' Gets complex sonorousness using Kullback-Leibler divergence
+#' instead of peak audibility.
+get_complex_sonorousness.kl <- function(complex_tone_audibility) {
+  if (length(complex_tone_audibility) == 0) {
+    0
+  } else {
+    # Construct a probability vector, where each bin corresponds to
+    # the probability of a discrete event
+    probs <- complex_tone_audibility / sum(complex_tone_audibility)
+    n <- length(probs)
+    uniform_probs <- 1 / n
+    non_zero_probs <- probs[probs > 0]
+    sum(
+      non_zero_probs * log(non_zero_probs / uniform_probs, base = 2)
+    )
+  }
+}
+
+get_complex_sonorousness.sum <- function(complex_tone_audibility) {
+  sum(complex_tone_audibility)
 }
 
 #' Get multiplicity

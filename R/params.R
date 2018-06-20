@@ -17,7 +17,9 @@ get_parncutt_params <- function(
   k_c = 0.2,
   k_s = 0.5,
   min_midi = 0,
-  max_midi = 120
+  max_midi = 120,
+  auditory_model = TRUE,
+  peak_method = "peak"
 ) {
   list(
     template_num_harmonics = template_num_harmonics,
@@ -28,7 +30,9 @@ get_parncutt_params <- function(
     k_c = k_c,
     k_s = k_s,
     min_midi = min_midi,
-    max_midi = max_midi
+    max_midi = max_midi,
+    auditory_model = auditory_model,
+    peak_method = peak_method
   )
 }
 
