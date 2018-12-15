@@ -501,17 +501,6 @@ get_complex_spectrum <- function(
   df
 }
 
-#' Get pure sonorousness
-#'
-#' Computes the pure sonorousness of a sound from its pure tone audibilities.
-#' @param pure_tone_audibility Numeric vector of pure tone audibilities
-#' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105)
-#' @return Pure sonorousness, a numeric scalar
-#' @export
-get_pure_sonorousness <- function(pure_tone_audibility, k_p) {
-  k_p * sqrt(sum(pure_tone_audibility ^ 2))
-}
-
 #' Get complex sonorousness
 #'
 #' Computes the complex sonorousness of a sound from its complex tone audibilities.
@@ -579,41 +568,6 @@ get_multiplicity <- function(combined_audibility,
     m <- m_prime ^ k_s
     m
   }
-}
-
-#' Get combined spectrum
-#'
-#' Gets the combined spectrum for a sound from its pure and complex audibilities. Represents Equations 11 and 16 in Parncutt & Strasburger (1994)
-#' @param pure_midi_pitch Numeric vector of MIDI pitches for the pure spectrum
-#' @param pure_tone_audibility Numeric vector of audibilities for the pure spectrum
-#' @param pure_midi_pitch Numeric vector of MIDI pitches for the complex spectrum
-#' @param pure_tone_audibility Numeric vector of audibilities for the complex spectrum
-#' @param k_s Numeric scalar; parameter from Parncutt & Strasburger (1994)
-#' @return \code{data.frame} with columns \code{pitch_midi} and \code{combined_audibility}
-#' @export
-get_combined_spectrum <- function(pure_midi_pitch,
-                                  pure_tone_audibility,
-                                  complex_midi_pitch,
-                                  complex_tone_audibility,
-                                  k_s) {
-  df <- merge(
-    data.frame(pitch_midi = pure_midi_pitch,
-               pure_tone_audibility = pure_tone_audibility),
-    data.frame(pitch_midi = complex_midi_pitch,
-               complex_tone_audibility = complex_tone_audibility),
-    by = "pitch_midi",
-    all = TRUE
-  )
-  df$combined_audibility <- pmax(df$pure_tone_audibility,
-                                 df$complex_tone_audibility,
-                                 0, na.rm = TRUE)
-  df$salience <- get_tone_salience(
-    combined_audibility = df$combined_audibility,
-    k_s = k_s
-  )
-  df$pure_tone_audibility <- NULL
-  df$complex_tone_audibility <- NULL
-  df
 }
 
 #' Get tone salience

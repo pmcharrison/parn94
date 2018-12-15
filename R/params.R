@@ -11,27 +11,15 @@
 parn94_params <- function(
   template_num_harmonics = 11,
   template_roll_off = 1,
-  template_stretched_octave = TRUE,
+  template_stretched_octave = FALSE,
   k_t = 3,
   k_p = 0.5,
   k_c = 0.2,
   k_s = 0.5,
   min_midi = 0,
   max_midi = 120,
-  auditory_model = TRUE,
+  auditory_model = TRUE,s
   peak_method = "peak"
 ) {
-  list(
-    template_num_harmonics = template_num_harmonics,
-    template_roll_off = template_roll_off,
-    template_stretched_octave = template_stretched_octave,
-    k_t = k_t,
-    k_p = k_p,
-    k_c = k_c,
-    k_s = k_s,
-    min_midi = min_midi,
-    max_midi = max_midi,
-    auditory_model = auditory_model,
-    peak_method = peak_method
-  )
+  as.list(environment())
 }
