@@ -12,17 +12,20 @@
 #' @references
 #' \insertAllCited{}
 #' @rdname pitch_salience
+#' @export
 pitch_salience <- function(x, ...) {
   UseMethod("pitch_salience")
 }
 
 #' @rdname pitch_salience
+#' @export
 pitch_salience.default <- function(x, ...) {
   x <- parn94(x, ...)
   pitch_salience(x)
 }
 
 #' @rdname pitch_salience
+#' @export
 pitch_salience.parn94 <- function(x, ...) {
   vec <- numeric(x$par$max_midi - x$par$min_midi + 1)
   ind <- x$combined_spectrum$pitch - x$par$min_midi + 1

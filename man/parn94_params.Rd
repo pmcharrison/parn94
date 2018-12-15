@@ -4,10 +4,11 @@
 \alias{parn94_params}
 \title{Get parameters for Parncutt's model}
 \usage{
-parn94_params(template_num_harmonics = 11, template_roll_off = 1,
-  template_stretched_octave = FALSE, k_t = 3, k_p = 0.5, k_c = 0.2,
-  k_s = 0.5, al_0 = 15, min_midi = 0, max_midi = 120,
-  auditory_model = TRUE, peak_method = "peak")
+parn94_params(unit_amplitude_in_dB = 60, template_num_harmonics = 11,
+  template_roll_off = 1, template_stretched_octave = FALSE, k_t = 3,
+  k_p = 0.5, k_c = 0.2, k_s = 0.5, k_m = 12, al_0 = 15,
+  min_midi = 0, max_midi = 120, auditory_model = TRUE,
+  peak_method = "peak")
 }
 \arguments{
 \item{k_t}{Numeric scalar; parameter from \insertCite{Parncutt1994;textual}{parn94}.}

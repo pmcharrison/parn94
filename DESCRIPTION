@@ -7,23 +7,19 @@ Depends: R (>= 3.4.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat,
-    knitr,
-    rmarkdown,
-    codetools
 RoxygenNote: 6.1.0
 RdMacros: Rdpack
 Imports: 
     assertthat,
-    ggplot2,
-    methods,
-    parallel,
     magrittr,
     hrep,
-    digest,
-    R.utils,
     tibble,
     purrr,
     Rdpack
+Suggests: testthat,
+    knitr,
+    rmarkdown,
+    ggplot2,
+    apa
 VignetteBuilder: knitr
 Remotes: pmcharrison/hrep

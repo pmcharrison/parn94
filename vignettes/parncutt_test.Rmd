@@ -4,23 +4,24 @@ author: "Peter M. C. Harrison"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+%\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: "`r system.file('bib.bib', package = 'HarmonyParncutt')`"
-csl: "`r system.file('apa.csl', package = 'HarmonyParncutt')`"
+  bibliography: "`r system.file('bib.bib', package = 'parn94')`"
+csl: "`r system.file('apa.csl', package = 'parn94')`"
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 
 library(ggplot2)
-library(HarmonyParncutt)
+library(parn94)
 library(magrittr)
-library(parallel)
+library(purrr)
+library(apa)
 
-data("bigand_1996", package = "HarmonyParncutt")
-data("bigand_1996_reference_chord", package = "HarmonyParncutt")
+data("bigand_1996", package = "parn94")
+data("bigand_1996_reference_chord", package = "parn94")
 
 theme_set(theme_bw() +
             theme(panel.grid.major = element_blank(),
@@ -37,25 +38,18 @@ This report compares this package's implementation of Parncutt's pitch commonali
 ## Results
 
 ```{r, include = TRUE}
-df <- bigand_1996 %>%
-  (function(df) {
-    df$pitch_commonality_new <- mclapply(
-      df$pitches, function(pitches) {
-        get_pitch_commonality(
-          chord_1 = as.numeric(bigand_1996_reference_chord),
-          chord_2 = pitches
-        )
-      }
-    ) %>% as.numeric
-    df
-  })
-
+df <- bigand_1996 
+df$pitch_commonality_new <- map_dbl(
+  df$pitches,
+  ~ pitch_commonality(as.numeric(bigand_1996_reference_chord),
+                      .)
+)
 ggplot(df, aes(x = pitch_commonality_new, y = pitch_commonality)) +
   geom_point() +
   scale_x_continuous("New implementation") +
   scale_y_continuous("Bigand et al. (1996) implementation")
 ```
 
-The two sets of values are highly correlated (`r apa::apa(cor.test(df$pitch_commonality, df$pitch_commonality_new))`). The differences between the results are likely to be down to the slightly different methodologies underpinning the algorithms; @Bigand1996 use the algorithm from @Parncutt1989, whereas we use the algorithm from @Parncutt1994, which uses a slightly different similarity measure for the two pitch salience profiles.
+The two sets of values are highly correlated (`r apa(cor.test(df$pitch_commonality, df$pitch_commonality_new))`). The differences between the results are likely to be down to the slightly different methodologies underpinning the algorithms; @Bigand1996 use the algorithm from @Parncutt1989, whereas we use the algorithm from @Parncutt1994, which uses a slightly different similarity measure for the two pitch salience profiles.
 
 ## References
