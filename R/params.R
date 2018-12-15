@@ -8,7 +8,7 @@
 #' @param min_midi Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model
 #' @param max_midi Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model
 #' @export
-get_parncutt_params <- function(
+parn94_params <- function(
   template_num_harmonics = 11,
   template_roll_off = 1,
   template_stretched_octave = TRUE,
@@ -35,13 +35,3 @@ get_parncutt_params <- function(
     peak_method = peak_method
   )
 }
-
-#' Get MIDI params
-#'
-#' Gets MIDI parameters, filling in defaults
-#' @importFrom HarmonyUtils get_midi_params
-#' @name get_midi_params
-#' @export
-#' @examples
-#' get_midi_params()
-NULL

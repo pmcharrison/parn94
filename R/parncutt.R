@@ -1,25 +1,6 @@
 # Implementing Parncutt's psychoacoustic model as reported in
 # Parncutt and Strasburger (1994)
 
-# Parncutt, R., & Strasburger, H. (1994). Applying psychoacoustics in composition: “Harmonic” progressions of “nonharmonic” sonorities. Perspectives of New Music, 32(2), 88–129.
-
-#' @importFrom magrittr "%>%"
-NULL
-
-#' @importFrom stats cor
-NULL
-
-#' @importFrom methods .valueClassTest
-NULL
-
-#' @importFrom methods new
-NULL
-
-#' @importFrom cacheR clear_cache
-#' @name clear_cache
-#' @export
-NULL
-
 setClassUnion("null_or_df", members = c("NULL", "data.frame"))
 setClassUnion("null_or_numeric", members = c("NULL", "numeric"))
 
@@ -49,7 +30,7 @@ setMethod(
     pitch_midi,
     level,
     midi_params = get_midi_params(),
-    parncutt_params = get_parncutt_params()
+    parncutt_params = parn94_params()
   ) {
     assertthat::assert_that(
       length(pitch_midi) == length(level),
@@ -111,9 +92,7 @@ get_parncutt_sonority_analysis <- function(
   expand_harmonics = TRUE,
   simple = TRUE,
   midi_params = get_midi_params(),
-  parncutt_params = get_parncutt_params(),
-  cache = TRUE,
-  cache_parncutt_sonority_analysis = NULL
+  parncutt_params = parn94_params()
 ) {
   assertthat::assert_that(
     is.numeric(frequency),
@@ -189,10 +168,7 @@ setGeneric("get_parncutt_pitch_commonality",
            valueClass = "numeric",
            function(chord_1, chord_2,
                     midi_params = get_midi_params(),
-                    parncutt_params = get_parncutt_params(),
-                    cache_inner = TRUE,
-                    cache_outer = FALSE,
-                    cache_parncutt_sonority_analysis = NULL) {
+                    parncutt_params = parn94_params()) {
              standardGeneric("get_parncutt_pitch_commonality")
            })
 setMethod(
@@ -200,10 +176,7 @@ setMethod(
   signature = c("sonority_analysis", "sonority_analysis"),
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
-                        parncutt_params = get_parncutt_params(),
-                        cache_inner = TRUE,
-                        cache_outer = FALSE,
-                        cache_parncutt_sonority_analysis = NULL) {
+                        parncutt_params = parn94_params()) {
     if (
       chord_1@complex_sonorousness == 0 ||
       chord_2@complex_sonorousness == 0
@@ -225,38 +198,24 @@ setMethod(
   signature = c("numeric", "numeric"),
   definition = function(chord_1, chord_2,
                         midi_params = get_midi_params(),
-                        parncutt_params = get_parncutt_params(),
-                        cache_inner = TRUE,
-                        cache_outer = FALSE,
-                        cache_parncutt_sonority_analysis = NULL) {
-    cacheR::cache(
-      fun_name = "get_parncutt_pitch_commonality",
-      cache = cache_outer,
-      cache_root = "cache",
-      cache_dir = "HarmonyParncutt/get_parncutt_pitch_commonality",
-      expr = expression({
-        list(chord_1, chord_2) %>%
-          lapply(function(chord) {
-            get_parncutt_sonority_analysis(
-              chord,
-              expand_harmonics = TRUE,
-              midi_params = midi_params,
-              parncutt_params = parncutt_params,
-              simple = FALSE,
-              cache = cache_inner,
-              cache_parncutt_sonority_analysis =
-                cache_parncutt_sonority_analysis
-            )
-          }) %>%
-          (function(x) {
-            get_parncutt_pitch_commonality(
-              x[[1]], x[[2]],
-              midi_params = midi_params,
-              parncutt_params = parncutt_params
-            )
-          })
+                        parncutt_params = parn94_params()) {
+    list(chord_1, chord_2) %>%
+      lapply(function(chord) {
+        get_parncutt_sonority_analysis(
+          chord,
+          expand_harmonics = TRUE,
+          midi_params = midi_params,
+          parncutt_params = parncutt_params,
+          simple = FALSE
+        )
+      }) %>%
+      (function(x) {
+        get_parncutt_pitch_commonality(
+          x[[1]], x[[2]],
+          midi_params = midi_params,
+          parncutt_params = parncutt_params
+        )
       })
-    )
   }
 )
 
@@ -271,10 +230,7 @@ setGeneric("get_parncutt_pitch_distance",
            valueClass = "numeric",
            function(chord_1, chord_2,
                     midi_params = get_midi_params(),
-                    parncutt_params = get_parncutt_params(),
-                    cache_inner = TRUE,
-                    cache_outer = FALSE,
-                    cache_parncutt_sonority_analysis = NULL) {
+                    parncutt_params = parn94_params()) {
              standardGeneric("get_parncutt_pitch_distance")
            })
 setMethod(
@@ -283,38 +239,24 @@ setMethod(
   definition = function(
     chord_1, chord_2,
     midi_params = get_midi_params(),
-    parncutt_params = get_parncutt_params(),
-    cache_inner = TRUE,
-    cache_outer = FALSE,
-    cache_parncutt_sonority_analysis = NULL
+    parncutt_params = parn94_params()
   ) {
-    cacheR::cache(
-      fun_name = "get_parncutt_pitch_distance",
-      cache = cache_outer,
-      cache_root = "cache",
-      cache_dir = "HarmonyParncutt/get_parncutt_pitch_distance",
-      expr = expression({
-        list(chord_1, chord_2) %>%
-          lapply(function(chord) {
-            get_parncutt_sonority_analysis(
-              chord,
-              expand_harmonics = TRUE,
-              midi_params = midi_params,
-              parncutt_params = parncutt_params,
-              simple = FALSE,
-              cache = cache_inner,
-              cache_parncutt_sonority_analysis =
-                cache_parncutt_sonority_analysis
-            )
-          }) %>%
-          (function(x) {
-            get_parncutt_pitch_distance(
-              x[[1]], x[[2]],
-              parncutt_params = parncutt_params
-            )
-          })
+    list(chord_1, chord_2) %>%
+      lapply(function(chord) {
+        get_parncutt_sonority_analysis(
+          chord,
+          expand_harmonics = TRUE,
+          midi_params = midi_params,
+          parncutt_params = parncutt_params,
+          simple = FALSE
+        )
+      }) %>%
+      (function(x) {
+        get_parncutt_pitch_distance(
+          x[[1]], x[[2]],
+          parncutt_params = parncutt_params
+        )
       })
-    )
   }
 )
 setMethod(
@@ -323,9 +265,7 @@ setMethod(
   definition = function(chord_1,
                         chord_2,
                         midi_params = get_midi_params(),
-                        parncutt_params = get_parncutt_params(),
-                        cache_inner = TRUE,
-                        cache_outer = FALSE) {
+                        parncutt_params = parn94_params()) {
     if (chord_1@complex_sonorousness == 0 ||
         chord_2@complex_sonorousness == 0) {
       as.numeric(NA)
@@ -531,7 +471,7 @@ get_complex_spectrum <- function(
   pitch_midi,
   pure_tone_audibility,
   midi_params = get_midi_params(),
-  parncutt_params = get_parncutt_params()
+  parncutt_params = parn94_params()
 ) {
   spectrum <- data.frame(
     pitch_midi = pitch_midi,

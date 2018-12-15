@@ -1,3 +1,26 @@
-# HarmonyParncutt
 
-The analysis currently uses a 1/n roll-off in the dB domain, which seems unrealistic. We should change this to a 1/n roll-off in the amplitude domain. In this context, Parncutt's 1/n roll-off for the audibility template seems wrong,because amplitude and audibility have a non-linear relationship. I think it would be best to empirically estimate a new template by repeatedly sampling from the model at different pitches.
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# parn94: Implementation of Richard Parncutt’s Psychoacoustic Harmony Algorithms
+
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+
+`parn94` is an R package that implements Richard Parncutt’s
+psychoacoustic harmony algorithms, as described in Parncutt &
+Strasburger (1994).
+
+## Installation
+
+You can install the current version of `parn94` from Github by entering
+the following commands into R:
+
+``` r
+if (!require(devtools)) install.packages("devtools")
+devtools::install_github("parn94")
+```
+
+## References
+
+Parncutt, R., & Strasburger, H. (1994). Applying psychoacoustics in
+composition: “Harmonic” progressions of “nonharmonic” sonorities.
+Perspectives of New Music, 32(2), 88–129.
