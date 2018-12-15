@@ -18,7 +18,13 @@ parn94.pi_sparse_spectrum <- function(x, par = parn94_params(), ...) {
   .parn94() %>%
     add_pure_spectrum(x, par) %>%
     add_complex_spectrum(par) %>%
-    add_combined_spectrum(par)
+    add_combined_spectrum(par) %>%
+    add_par(par)
+}
+
+add_par <- function(x, par) {
+  x$par <- par
+  x
 }
 
 .parn94 <- function() {

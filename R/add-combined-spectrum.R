@@ -4,7 +4,7 @@ add_combined_spectrum <- function(x, par) {
                                  df$complex_tone_audibility,
                                  0, na.rm = TRUE)
   df$salience <- get_tone_salience(df$combined_audibility, par$k_s)
-  x$combined_spectrum <- [, c("pitch", "combined_audibility", "salience")]
+  x$combined_spectrum <- df[, c("pitch", "combined_audibility", "salience")]
   x
 }
 

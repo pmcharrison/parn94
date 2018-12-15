@@ -4,24 +4,26 @@ Version: 0.1.0
 Authors@R: person("Peter", "Harrison", email = "p.m.c.harrison@qmul.ac.uk", role = c("aut", "cre"))
 Description: This package presents an implementation of Richard Parncutt's psychoacoustic harmony analysis algorithms, as described in Parncutt & Strasburger (1994).
 Depends: R (>= 3.4.0)
-License: GPL-3
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat,
     knitr,
     rmarkdown,
     codetools
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
+RdMacros: Rdpack
 Imports: 
     assertthat,
     ggplot2,
     methods,
     parallel,
     magrittr,
-    HarmonyUtils (>= 0.3.0),
+    hrep,
     digest,
     R.utils,
     tibble,
-    purrr
+    purrr,
+    Rdpack
 VignetteBuilder: knitr
-Remotes: bitbucket::pmcharrison/harmonyutils,bitbucket::pmcharrison/cacher
+Remotes: pmcharrison/hrep
