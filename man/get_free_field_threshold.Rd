@@ -7,11 +7,18 @@
 get_free_field_threshold(kHz)
 }
 \arguments{
-\item{kHz}{Numeric vector of frequencies in kHz}
+\item{kHz}{Numeric vector of frequencies in kHz.}
 }
 \value{
-Numeric vector of corresponding free-field thresholds in dB SPL
+Numeric vector of corresponding free-field thresholds in dB SPL.
 }
 \description{
-Returns the free-field threshold (dB SPL) of hearing in quiet for pure tones of given frequencies. This is the minimum sound level at which a pure tone at that frequency will be heard. Corresponds to Equation 2 in Parncutt & Strasburger (1994).
+Returns the free-field threshold (dB SPL) of hearing in quiet for pure tones
+of given frequencies.
+This is the minimum sound level at which a pure tone at that frequency
+will be heard.
+Corresponds to Equation 2 in \insertCite{Parncutt1994;textual}{parn94}.
+}
+\references{
+\insertAllCited{}
 }

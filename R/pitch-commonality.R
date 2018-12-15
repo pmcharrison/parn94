@@ -19,5 +19,7 @@ pitch_commonality <- function(x, y, ...) {
     stop("x and y must be created with identical 'min_midi' and max_midi' ",
          "parameters")
 
-  cor(s1, s2)
+  if (all(s1 == 0 ) || all(s2 == 0))
+    as.numeric(NA) else
+      cor(s1, s2)
 }

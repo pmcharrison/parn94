@@ -7,12 +7,17 @@
 get_pure_tone_height(kHz)
 }
 \arguments{
-\item{kHz}{Numeric vector of frequencies in kHz}
+\item{kHz}{Numeric vector of frequencies in kHz.}
 }
 \value{
-Numeric vector of corresponding pure-tone heights, with units of equivalent rectangular bandwidths (ERBs)
+Numeric vector of corresponding pure-tone heights,
+with units of equivalent rectangular bandwidths (ERBs).
 }
 \description{
-Returns the pure-tone heights (a.k.a. critical-band rates) of pure tones of given frequencies.
-Equation 3 in Parncutt & Strasburger (1994).
+Returns the pure-tone heights (a.k.a. critical-band rates)
+of pure tones of given frequencies.
+Equation 3 in \insertCite{Parncutt1994;textual}{parn94}.
+}
+\references{
+\insertAllCited{}
 }

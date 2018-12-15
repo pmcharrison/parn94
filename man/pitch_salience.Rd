@@ -4,23 +4,30 @@
 \alias{pitch_salience}
 \alias{pitch_salience.default}
 \alias{pitch_salience.parn94}
-\title{Get expanded salience vector}
+\title{Get pitch salience}
 \usage{
 pitch_salience(x, ...)
 
 \method{pitch_salience}{default}(x, ...)
 
-\method{pitch_salience}{parn94}(x)
+\method{pitch_salience}{parn94}(x, ...)
 }
 \arguments{
-\item{...}{Further arguments to pass to \code{\link{parn94}()}.}
+\item{x}{Object to analyse.}
 
-\item{Object}{to analyse.}
+\item{...}{Further arguments to pass to \code{\link{parn94}()}.}
 }
-\description{
-Returns a numeric salience vector where each element describes
+\value{
+Returns a vector where each element describes
 the salience of a different chromatic pitch.
 The first element of this vector corresponds to the
 \code{min_midi} argument from \code{\link{parn94_params}},
 and the last element corresponds to the \code{max_midi} argument.
+}
+\description{
+Analyses the pitch salience of a sonority, after
+\insertCite{Parncutt1994;textual}{parn94}.
+}
+\references{
+\insertAllCited{}
 }

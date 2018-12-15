@@ -4,7 +4,7 @@
 \alias{get_overall_masking_level}
 \title{Get overall masking level}
 \usage{
-get_overall_masking_level(auditory_level, pure_tone_height, k_m = 12)
+get_overall_masking_level(auditory_level, pure_tone_height, k_m)
 }
 \arguments{
 \item{auditory_level}{Numeric vector of auditory levels}
@@ -15,5 +15,10 @@ get_overall_masking_level(auditory_level, pure_tone_height, k_m = 12)
 Numeric vector of overall masking levels (dB)
 }
 \description{
-Returns overall masking levels for a set of pure tones that are assumed to be playing simultaneously. Corresponds to Parncutt & Strasburger (1994) Equation 5.
+Returns overall masking levels for a set of pure tones
+that are assumed to be playing simultaneously.
+Corresponds to Parncutt & Strasburger (1994) Equation 5.
+}
+\references{
+\insertAllCited{}
 }

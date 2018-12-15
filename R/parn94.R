@@ -9,7 +9,7 @@ parn94.numeric <- function(x, ...) {
 
 parn94.pi_chord <- function(x, ...) {
   if (!hrep::is.equal_tempered(x)) stop("input must be equal-tempered")
-  x <- pi_sparse_spectrum(round = TRUE)
+  x <- hrep::pi_sparse_spectrum(x, round = TRUE)
   parn94(x, ...)
 }
 

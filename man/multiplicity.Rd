@@ -16,6 +16,8 @@ multiplicity(x, k_s = parn94_params()$k_s, ...)
 \item{x}{Object to analyse.}
 
 \item{k_s}{Numeric scalar, parameter from Parncutt & Strasburger (1994).}
+
+\item{...}{Further parameters to pass to \code{\link{parn94}()}.}
 }
 \value{
 Multiplicity, a numeric scalar.

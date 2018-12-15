@@ -16,6 +16,8 @@ complex_sonor(x, k_c = parn94_params()$k_c, ...)
 \item{x}{Object to analyse.}
 
 \item{k_c}{Parncutt & Strasburger (1994) set this to 0.2 (p. 105)}
+
+\item{...}{Further parameters to pass to \code{\link{parn94}()}.}
 }
 \value{
 Complex sonorousness, a numeric scalar.

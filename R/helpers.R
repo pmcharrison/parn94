@@ -56,7 +56,8 @@ get_pure_tone_height <- function(kHz) {
 get_partial_masking_level <- function(masker_auditory_level,
                                       masker_pure_tone_height,
                                       maskee_auditory_level,
-                                      maskee_pure_tone_height) {
+                                      maskee_pure_tone_height,
+                                      k_m) {
   assertthat::assert_that(
     length(masker_auditory_level) == length(masker_pure_tone_height),
     length(maskee_auditory_level) == length(maskee_pure_tone_height)

@@ -7,13 +7,20 @@
 get_pure_tone_audible_level(auditory_level, overall_masking_level)
 }
 \arguments{
-\item{auditory_level}{Numeric vector of auditory levels for a set of pure tones (dB)}
+\item{auditory_level}{Numeric vector of auditory levels for
+a set of pure tones (dB).}
 
-\item{overall_masking_level}{Numeric vector of overall masking levels for a set of pure tones (dB)}
+\item{overall_masking_level}{Numeric vector of overall masking levels
+for a set of pure tones (dB).}
 }
 \value{
-Numeric vector of audible levels (dB)
+Numeric vector of audible levels (dB).
 }
 \description{
-Returns the audible level for set of pure tones subject to a given masking pattern. Corresponds to Equation 6 of Parncutt & Strasburger (1994).
+Returns the audible level for set of pure tones subject
+to a given masking pattern.
+Corresponds to Equation 6 of \insertCite{Parncutt1994;textual}{parn94}.
+}
+\references{
+\insertAllCited{}
 }

@@ -4,7 +4,7 @@
 \alias{get_pure_tone_audibility}
 \title{Get audibility}
 \usage{
-get_pure_tone_audibility(pure_tone_audible_level, al_0 = 15)
+get_pure_tone_audibility(pure_tone_audible_level, al_0)
 }
 \arguments{
 \item{al_0}{constant (see Equation 7 of Parncutt & Strasburger (1994).)}
@@ -15,5 +15,10 @@ get_pure_tone_audibility(pure_tone_audible_level, al_0 = 15)
 Numeric vector of pure tone audibilities
 }
 \description{
-Returns the audibility of a set of pure tone components as a function of their audible levels. Corresponds to Equation 7 of Parncutt & Strasburger (1994).
+Returns the audibility of a set of pure tone components as a
+function of their audible levels.
+Corresponds to Equation 7 of \insertCite{Parncutt1994;textual}{parn94}.
+}
+\references{
+\insertAllCited{}
 }

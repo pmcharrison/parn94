@@ -1,3 +1,5 @@
+# @param res Where results are stored
+# @param x Input spectrum
 add_pure_spectrum <- function(res, x, par) {
   y <- tibble::tibble(
     pitch = hrep::pitch(x),
@@ -12,9 +14,9 @@ add_pure_spectrum <- function(res, x, par) {
                                                       k_m = par$k_m),
     pure_tone_audible_level = get_pure_tone_audible_level(auditory_level,
                                                           overall_masking_level),
-    pure_tone_audibility <- get_pure_tone_audibility(pure_tone_audible_level,
-                                                     al_0 = par$al_0)
+    pure_tone_audibility = get_pure_tone_audibility(pure_tone_audible_level,
+                                                    al_0 = par$al_0)
   )
-  res$y <- y[y$pure_tone_audibility > 0, ]
+  res$pure_spectrum <- y[y$pure_tone_audibility > 0, ]
   res
 }

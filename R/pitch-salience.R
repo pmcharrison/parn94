@@ -25,7 +25,7 @@ pitch_salience.default <- function(x, ...) {
 #' @rdname pitch_salience
 pitch_salience.parn94 <- function(x, ...) {
   vec <- numeric(x$par$max_midi - x$par$min_midi + 1)
-  ind <- x$combined_spectrum$pitch_midi - min_midi + 1
+  ind <- x$combined_spectrum$pitch - x$par$min_midi + 1
   val <- x$combined_spectrum$salience
   vec[ind] <- val
   .pitch_salience(vec, x$par$min_midi, x$par$max_midi)

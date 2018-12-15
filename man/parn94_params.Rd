@@ -6,22 +6,27 @@
 \usage{
 parn94_params(template_num_harmonics = 11, template_roll_off = 1,
   template_stretched_octave = FALSE, k_t = 3, k_p = 0.5, k_c = 0.2,
-  k_s = 0.5, min_midi = 0, max_midi = 120, auditory_model = TRUE,
-  peak_method = "peak")
+  k_s = 0.5, al_0 = 15, min_midi = 0, max_midi = 120,
+  auditory_model = TRUE, peak_method = "peak")
 }
 \arguments{
-\item{k_t}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
+\item{k_t}{Numeric scalar; parameter from \insertCite{Parncutt1994;textual}{parn94}.}
 
-\item{k_p}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
+\item{k_p}{Numeric scalar; parameter from \insertCite{Parncutt1994;textual}{parn94}.}
 
-\item{k_c}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
+\item{k_c}{Numeric scalar; parameter from \insertCite{Parncutt1994;textual}{parn94}.}
 
-\item{k_s}{Numeric scalar; parameter from Parncutt & Strasburger (1994)}
+\item{k_s}{Numeric scalar; parameter from \insertCite{Parncutt1994;textual}{parn94}.}
 
-\item{min_midi}{Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model}
+\item{al_0}{Numeric scalar; parameter from \insertCite{Parncutt1994;textual}{parn94}.}
 
-\item{max_midi}{Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model}
+\item{min_midi}{Numeric scalar; the lowest MIDI pitch considered in the psychoacoustic model.}
+
+\item{max_midi}{Numeric scalar; the highest MIDI pitch considered in the psychoacoustic model.}
 }
 \description{
-Gets parameters for Parncutt's psychoacoustic model
+Gets parameters for Parncutt's psychoacoustic model.
+}
+\references{
+\insertAllCited{}
 }

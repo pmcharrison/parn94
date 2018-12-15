@@ -7,13 +7,22 @@
 get_tone_salience(combined_audibility, k_s)
 }
 \arguments{
-\item{combined_audibility}{Numeric vector corresponding to the audibilities of each tone in the combined (pure and complex) spectrum}
+\item{combined_audibility}{Numeric vector corresponding to the
+audibilities of each tone in the combined (pure and complex) spectrum.}
 
-\item{k_s}{Numeric scalar; Parncutt & Strasburger (1994) set this to 0.5}
+\item{k_s}{Numeric scalar; \insertCite{Parncutt1994;textual}{parn94}
+set this to 0.5.}
 }
 \value{
-Numeric vector of saliences of the same length as \code{combined_audibility}, giving the salience of each respective tone.
+Numeric vector of saliences of the same length as
+\code{combined_audibility}, giving the salience of each respective tone.
 }
 \description{
-Gets the salience of different tones within a sonority with reference to the combined (complex and pure) spectrum. Salience can be interpreted as the probability of consciously perceiving a given pitch.
+Gets the salience of different tones within a sonority with
+reference to the combined (complex and pure) spectrum.
+Salience can be interpreted as the probability of consciously
+perceiving a given pitch.
+}
+\references{
+\insertAllCited{}
 }

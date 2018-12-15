@@ -4,7 +4,7 @@
 #' \insertCite{Parncutt1994;textual}{parn94}.
 #' @param x Object to analyse.
 #' @param k_s Numeric scalar, parameter from Parncutt & Strasburger (1994).
-#' @param ... Further parameters to pass to \code\link{parn94}()}.
+#' @param ... Further parameters to pass to \code{\link{parn94}()}.
 #' @return Multiplicity, a numeric scalar.
 #' @rdname multiplicity
 #' @references
@@ -18,7 +18,7 @@ multiplicity <- function(x, k_s = parn94_params()$k_s, ...) {
 #' @export
 multiplicity.parn94 <- function(x, k_s = parn94_params()$k_s, ...) {
   if (length(x$combined_audibility) == 0) {
-    as.numeric(NA)
+    0
   } else {
     a_max <- max(x$combined_audibility)
     m_prime <- sum(x$combined_audibility) / a_max

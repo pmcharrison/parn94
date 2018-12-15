@@ -12,6 +12,7 @@
 #' \insertAllCited{}
 #' @export
 parn94_params <- function(
+  unit_amplitude_in_dB = 60,
   template_num_harmonics = 11,
   template_roll_off = 1,
   template_stretched_octave = FALSE,
@@ -19,6 +20,7 @@ parn94_params <- function(
   k_p = 0.5,
   k_c = 0.2,
   k_s = 0.5,
+  k_m = 12,
   al_0 = 15,
   min_midi = 0,
   max_midi = 120,

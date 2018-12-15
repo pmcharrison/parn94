@@ -16,6 +16,8 @@ pure_sonor(x, k_p = parn94_params()$k_p, ...)
 \item{x}{Object to analyse.}
 
 \item{k_p}{Parncutt & Strasburger (1994) set this to 0.5 (p. 105).}
+
+\item{...}{Further parameters to pass to \code{\link{parn94}()}.}
 }
 \value{
 Pure sonorousness, a numeric scalar.

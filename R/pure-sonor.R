@@ -4,7 +4,7 @@
 #' \insertCite{Parncutt1994;textual}{parn94}.
 #' @param x Object to analyse.
 #' @param k_p Parncutt & Strasburger (1994) set this to 0.5 (p. 105).
-#' @param ... Further parameters to pass to \code\link{parn94}()}.
+#' @param ... Further parameters to pass to \code{\link{parn94}()}.
 #' @return Pure sonorousness, a numeric scalar.
 #' @rdname pure_sonor
 #' @references
