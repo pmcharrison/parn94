@@ -42,6 +42,7 @@ get_pure_tone_height <- function(kHz) {
 #' Equation 4 in \insertCite{Parncutt1994;textual}{parn94}.
 #' @param masker_auditory_level Numeric vector of masker auditory levels.
 #' @param masker_pure_tone_height Numeric vector of masker pure tone heights.
+#' @param maskee_auditory_level Numeric vector of maskee auditory levels.
 #' @param maskee_pure_tone_height Numeric vector of maskee pure tone heights.
 #' @param k_m Parameter \code{k_m} in \insertCite{Parncutt1994;textual}{parn94}.
 #' represents the masking pattern gradient for a pure tone,
@@ -92,7 +93,8 @@ get_partial_masking_level <- function(masker_auditory_level,
 #' Corresponds to Parncutt & Strasburger (1994) Equation 5.
 #' @param auditory_level Numeric vector of auditory levels
 #' @param pure_tone_height Numeric vector of pure tone heights
-#' @return Numeric vector of overall masking levels (dB)
+#' @param k_m See \code{\link{parn94_params}()}.
+#' @return Numeric vector of overall masking levels (dB).
 #' @references
 #' \insertAllCited{}
 #' @export
@@ -143,9 +145,9 @@ get_pure_tone_audible_level <- function(auditory_level, overall_masking_level) {
 #' Returns the audibility of a set of pure tone components as a
 #' function of their audible levels.
 #' Corresponds to Equation 7 of \insertCite{Parncutt1994;textual}{parn94}.
-#' @param audible_level Numeric vector of audible levels (dB)
-#' @param al_0 constant (see Equation 7 of Parncutt & Strasburger (1994).)
-#' @return Numeric vector of pure tone audibilities
+#' @param pure_tone_audible_level Numeric vector of audible levels (dB).
+#' @param al_0 constant (see Equation 7 of Parncutt & Strasburger (1994)).
+#' @return Numeric vector of pure tone audibilities.
 #' @references
 #' \insertAllCited{}
 #' @export

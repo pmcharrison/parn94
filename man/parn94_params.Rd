@@ -30,6 +30,8 @@ harmonic template. This parameter is passed to
 
 \item{k_s}{(Numeric scalar) Scaling coefficient for multiplicity.}
 
+\item{k_m}{(Numeric scalar) Gradient of a pure tone's masking pattern.}
+
 \item{al_0}{(Numeric scalar) Audibility saturation rate.}
 
 \item{min_midi}{(Numeric scalar) Lowest MIDI pitch considered by the model.}

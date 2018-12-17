@@ -12,6 +12,8 @@ get_partial_masking_level(masker_auditory_level, masker_pure_tone_height,
 
 \item{masker_pure_tone_height}{Numeric vector of masker pure tone heights.}
 
+\item{maskee_auditory_level}{Numeric vector of maskee auditory levels.}
+
 \item{maskee_pure_tone_height}{Numeric vector of maskee pure tone heights.}
 
 \item{k_m}{Parameter \code{k_m} in \insertCite{Parncutt1994;textual}{parn94}.

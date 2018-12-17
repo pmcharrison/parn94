@@ -10,4 +10,6 @@ NULL
 #' @importFrom methods new
 NULL
 
-`.` <- NULL
+# `.` <- NULL
+
+utils::globalVariables(c(".", ".data"), package = "parn94")

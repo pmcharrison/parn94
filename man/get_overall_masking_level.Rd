@@ -10,9 +10,11 @@ get_overall_masking_level(auditory_level, pure_tone_height, k_m)
 \item{auditory_level}{Numeric vector of auditory levels}
 
 \item{pure_tone_height}{Numeric vector of pure tone heights}
+
+\item{k_m}{See \code{\link{parn94_params}()}.}
 }
 \value{
-Numeric vector of overall masking levels (dB)
+Numeric vector of overall masking levels (dB).
 }
 \description{
 Returns overall masking levels for a set of pure tones

@@ -17,6 +17,7 @@
 #' @param k_p (Numeric scalar) Scaling coefficient for pure sonorousness.
 #' @param k_c (Numeric scalar) Scaling coefficient for complex sonorousness.
 #' @param k_s (Numeric scalar) Scaling coefficient for multiplicity.
+#' @param k_m (Numeric scalar) Gradient of a pure tone's masking pattern.
 #' @param al_0 (Numeric scalar) Audibility saturation rate.
 #' @param min_midi (Numeric scalar) Lowest MIDI pitch considered by the model.
 #' @param max_midi (Numeric scalar) Highest MIDI pitch considered by the model.
