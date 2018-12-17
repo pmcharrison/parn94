@@ -17,11 +17,12 @@ multiplicity <- function(x, k_s = parn94_params()$k_s, ...) {
 #' @rdname multiplicity
 #' @export
 multiplicity.parn94 <- function(x, k_s = parn94_params()$k_s, ...) {
-  if (length(x$combined_audibility) == 0) {
+  audibility <- x$combined_spectrum$combined_audibility
+  if (length(audibility) == 0) {
     0
   } else {
-    a_max <- max(x$combined_audibility)
-    m_prime <- sum(x$combined_audibility) / a_max
+    a_max <- max(audibility)
+    m_prime <- sum(audibility) / a_max
     m <- m_prime ^ k_s
     m
   }

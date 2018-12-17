@@ -105,7 +105,7 @@ get_overall_masking_level <- function(auditory_level,
     maskee_auditory_level = auditory_level,
     maskee_pure_tone_height = pure_tone_height,
     k_m = k_m
-  ) %T>% saveRDS("x1.rds")
+  )
   # Tones don't mask themselves
   diag(partial_mask_matrix) <- 0
   # Sum over maskers to find the masking for each maskee

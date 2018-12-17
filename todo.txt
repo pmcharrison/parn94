@@ -1,2 +1,0 @@
-- Sequential measures (e.g. pitch commonality) need to be rationalised
-with the alternative peak-picking measures

@@ -15,7 +15,8 @@ Imports:
     hrep,
     tibble,
     purrr,
-    Rdpack
+    Rdpack,
+    methods
 Suggests: testthat,
     knitr,
     rmarkdown,

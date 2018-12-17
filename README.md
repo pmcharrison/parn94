@@ -19,6 +19,73 @@ if (!require(devtools)) install.packages("devtools")
 devtools::install_github("parn94")
 ```
 
+## Example usage
+
+This package provides a variety of methods for analysing chords in
+isolation and in combination.
+
+Most functions can be used with numeric inputs, which will be
+interpreted as MIDI note numbers. Methods are also provided for various
+chord classes in the `hrep` package, such as `pi_chord`,
+`pi_sparse_spectrum`, and so on. These inputs are internally coerced to
+`pi_sparse_spectrum` before continuing the analysis.
+
+Key functions include:
+
+  - `pure_sonor()` - returns the *pure sonorousness* of a sonority the
+    amount of pitch content in a sonority, corresponding to the
+    audibility of its pure tone components after accounting for auditory
+    masking.
+  - `complex_sonor()` - returns the *complex sonorousness* of a
+    sonority, the extent to which a sonority resembles a harmonic
+    series.
+  - `multiplicity()` - estimates *multiplicity*, how many tones are
+    perceived in a sonority.
+  - `pitch_commonality()` - estimates the *pitch commonality* of a pair
+    of sonorities.
+  - `pitch_distance()` - estimates the *pitch distance* between a pair
+    of sonorities.
+
+<!-- end list -->
+
+``` r
+library(parn94)
+
+c_maj <- c(60, 64, 67) # C major triad
+c_dim <- c(60, 63, 66) # C diminished triad
+g_maj <- c(59, 62, 67) # G major triad
+
+# Pure sonorousness
+pure_sonor(c_maj)
+#> [1] 0.6157366
+pure_sonor(c_dim)
+#> [1] 0.4758778
+
+# Complex sonorousness
+complex_sonor(c_maj)
+#> [1] 0.309965
+complex_sonor(c_dim)
+#> [1] 0.147792
+
+# Multiplicity
+multiplicity(c_maj)
+#> [1] 2.843946
+multiplicity(c_dim)
+#> [1] 3.192587
+
+# Pitch commonality
+pitch_commonality(c_maj, g_maj)
+#> [1] 0.3496254
+pitch_commonality(c_maj, c_dim)
+#> [1] 0.2535183
+
+# Pitch distance
+pitch_distance(c_maj, g_maj)
+#> [1] 1.495423
+pitch_distance(c_maj, c_dim)
+#> [1] 1.003077
+```
+
 ## References
 
 Parncutt, R., & Strasburger, H. (1994). Applying psychoacoustics in

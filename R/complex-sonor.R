@@ -17,9 +17,10 @@ complex_sonor <- function(x, k_c = parn94_params()$k_c, ...) {
 #' @rdname complex_sonor
 #' @export
 complex_sonor.parn94 <- function(x, k_c = parn94_params()$k_c, ...) {
-  if (length(x$complex_tone_audibility) == 0)
+  audibility <- x$complex_spectrum$complex_tone_audibility
+  if (length(audibility) == 0)
     0 else
-      k_c * max(x$complex_tone_audibility)
+      k_c * max(audibility)
 }
 
 #' @rdname complex_sonor

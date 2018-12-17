@@ -4,7 +4,7 @@ add_complex_spectrum <- function(x, par) {
   df <- tibble::tibble(
     pitch = seq(from = par$min_midi,
                 to = par$max_midi),
-    complex_tone_audibility = purrr::map_dbl(pitch,
+    complex_tone_audibility = purrr::map_dbl(.data$pitch,
                                              template_match,
                                              template,
                                              spectrum,

@@ -17,7 +17,7 @@ pure_sonor <- function(x, k_p = parn94_params()$k_p, ...) {
 #' @rdname pure_sonor
 #' @export
 pure_sonor.parn94 <- function(x, k_p = parn94_params()$k_p, ...) {
-  k_p * sqrt(sum(x$pure_tone_audibility ^ 2))
+  k_p * sqrt(sum(x$pure_spectrum$pure_tone_audibility ^ 2))
 }
 
 #' @rdname pure_sonor

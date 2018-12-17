@@ -1,4 +1,4 @@
 library(testthat)
-library(HarmonyParncutt)
+library(parn94)
 
-test_check("HarmonyParncutt")
+test_check("parn94")

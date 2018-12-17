@@ -9,3 +9,5 @@ NULL
 
 #' @importFrom methods new
 NULL
+
+`.` <- NULL
