@@ -20,8 +20,11 @@ library(magrittr)
 library(purrr)
 library(apa)
 
-data("bigand_1996", package = "parn94")
-data("bigand_1996_reference_chord", package = "parn94")
+bigand_1996 <- system.file("bigand1996/compiled/bigand_1996.rds", 
+                           package = "parn94", mustWork = TRUE) %>% readRDS
+bigand_1996_reference_chord <- 
+  system.file("bigand1996/compiled/bigand_1996_reference_chord.rds", 
+              package = "parn94", mustWork = TRUE) %>% readRDS
 
 theme_set(theme_bw() +
             theme(panel.grid.major = element_blank(),

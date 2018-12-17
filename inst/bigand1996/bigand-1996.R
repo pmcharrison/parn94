@@ -1,6 +1,13 @@
-library(magrittr)
+# This script compiles data for Bigand et al. (1996),
+# which can subsequently be used for regression testing.
 
-# Functions ####
+# Bigand, E., Parncutt, R., & Lerdahl, F. (1996).
+# Perception of musical tension in short chord sequences:
+# The influence of harmonic function, sensory dissonance, horizontal motion,
+# and musical training. Perception & Psychophysics, 58(1), 124–141.
+# https://doi.org/10.3758/BF03205482
+
+library(magrittr)
 
 convert_chord_type_to_pc_set <- function(chord_type) {
   assertthat::assert_that(
@@ -103,7 +110,7 @@ deduce_chord_pitches <- function(
 
 # Actions ####
 
-bigand_1996 <- read.csv("data-raw/bigand-1996-data.csv", stringsAsFactors = FALSE) %>%
+bigand_1996 <- read.csv("inst/bigand1996/raw/bigand-1996-data.csv", stringsAsFactors = FALSE) %>%
   # Correct mistakes
   ## Incorrect tenor int. size - fixed using Fig. 1
   (function(df) {
@@ -113,7 +120,7 @@ bigand_1996 <- read.csv("data-raw/bigand-1996-data.csv", stringsAsFactors = FALS
     df
   })
 
-bigand_1996_reference_chord <- read.csv("data-raw/bigand-1996-reference-chord.csv",
+bigand_1996_reference_chord <- read.csv("inst/bigand1996/raw/bigand-1996-reference-chord.csv",
                                          stringsAsFactors = FALSE) %>% as.list
 
 bigand_1996$root_pc <- bigand_1996$bass_interval_size # because all chords were root position
@@ -141,5 +148,5 @@ bigand_1996$pitches <- mapply(
   SIMPLIFY = FALSE
 ) %>% I
 
-devtools::use_data(bigand_1996, overwrite = TRUE)
-devtools::use_data(bigand_1996_reference_chord, overwrite = TRUE)
+saveRDS(bigand_1996, "inst/bigand1996/compiled/bigand_1996.rds")
+saveRDS(bigand_1996_reference_chord, "inst/bigand1996/compiled/bigand_1996_reference_chord.rds")
