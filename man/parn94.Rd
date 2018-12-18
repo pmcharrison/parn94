@@ -2,21 +2,31 @@
 % Please edit documentation in R/parn94.R
 \name{parn94}
 \alias{parn94}
-\alias{parn94.numeric}
-\alias{parn94.pi_chord}
+\alias{parn94.default}
 \alias{parn94.pi_sparse_spectrum}
 \title{Parncutt & Strasburger (1994)}
 \usage{
 parn94(x, par = parn94_params())
 
-\method{parn94}{numeric}(x, par = parn94_params())
-
-\method{parn94}{pi_chord}(x, par = parn94_params())
+\method{parn94}{default}(x, par = parn94_params())
 
 \method{parn94}{pi_sparse_spectrum}(x, par = parn94_params())
 }
 \arguments{
-\item{x}{Object to analyse.}
+\item{x}{Object to analyse,
+which will be coerced to an object of class
+\code{\link[hrep]{pi_sparse_spectrum}}.
+Various input types are possible:
+\itemize{
+\item Numeric vectors will be treated as vectors of MIDI note numbers,
+which will be expanded into their implied harmonics.
+\item A two-element list can be used to define a harmonic spectrum.
+The first element should be a vector of MIDI note numbers,
+the second a vector of amplitudes.
+\item The function also accepts classes from the \code{hrep} package,
+such as produced by \code{\link[hrep]{pi_chord}()} and
+\code{\link[hrep]{pi_sparse_spectrum}()}.
+}}
 
 \item{par}{Parameter list as created by \code{\link{parn94_params}()}.}
 }

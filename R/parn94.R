@@ -3,7 +3,18 @@
 #' This function analyses a sonority using Richard Parncutt's
 #' psychoacoustic model of harmony, as described in
 #' \insertCite{Parncutt1994;textual}{parn94}.
-#' @param x Object to analyse.
+#' @param x Object to analyse,
+#' which will be coerced to an object of class
+#' \code{\link[hrep]{pi_sparse_spectrum}}.
+#' Various input types are possible:
+#' * Numeric vectors will be treated as vectors of MIDI note numbers,
+#' which will be expanded into their implied harmonics.
+#' * A two-element list can be used to define a harmonic spectrum.
+#' The first element should be a vector of MIDI note numbers,
+#' the second a vector of amplitudes.
+#' * The function also accepts classes from the \code{hrep} package,
+#' such as produced by \code{\link[hrep]{pi_chord}()} and
+#' \code{\link[hrep]{pi_sparse_spectrum}()}.
 #' @param par Parameter list as created by \code{\link{parn94_params}()}.
 #' @return An list of class \code{parn94}, comprising the following components:
 #' \item{pure_spectrum}{A tibble describing the sonority's pure spectrum.
@@ -20,6 +31,7 @@
 #' @references
 #' \insertAllCited{}
 #' @rdname parn94
+#' @md
 #' @export
 parn94 <- function(x, par = parn94_params()) {
   UseMethod("parn94")
@@ -27,15 +39,7 @@ parn94 <- function(x, par = parn94_params()) {
 
 #' @rdname parn94
 #' @export
-parn94.numeric <- function(x, par = parn94_params()) {
-  x <- hrep::pi_chord(x)
-  parn94(x, par = par)
-}
-
-#' @rdname parn94
-#' @export
-parn94.pi_chord <- function(x, par = parn94_params()) {
-  if (!hrep::is.equal_tempered(x)) stop("input must be equal-tempered")
+parn94.default <- function(x, par = parn94_params()) {
   x <- hrep::pi_sparse_spectrum(x, round = TRUE)
   parn94(x, par = par)
 }
