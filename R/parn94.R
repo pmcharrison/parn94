@@ -16,6 +16,10 @@
 #' such as produced by \code{\link[hrep]{pi_chord}()} and
 #' \code{\link[hrep]{pi_sparse_spectrum}()}.
 #' @param par Parameter list as created by \code{\link{parn94_params}()}.
+#' @param ... Parameters to pass to \code{\link[hrep]{pi_sparse_spectrum}}.
+#' * \code{num_harmonics}: Number of harmonics to use when expanding
+#' chord tones into their implied harmonics.
+#' * \code{roll_off}: Rate of amplitude roll-off for the harmonics.
 #' @return An list of class \code{parn94}, comprising the following components:
 #' \item{pure_spectrum}{A tibble describing the sonority's pure spectrum.
 #' The pure spectrum is a spectral representation of the input sound
@@ -33,20 +37,20 @@
 #' @rdname parn94
 #' @md
 #' @export
-parn94 <- function(x, par = parn94_params()) {
+parn94 <- function(x, par = parn94_params(), ...) {
   UseMethod("parn94")
 }
 
 #' @rdname parn94
 #' @export
-parn94.default <- function(x, par = parn94_params()) {
-  x <- hrep::pi_sparse_spectrum(x, round = TRUE)
+parn94.default <- function(x, par = parn94_params(), ...) {
+  x <- hrep::pi_sparse_spectrum(x, round = TRUE, ...)
   parn94(x, par = par)
 }
 
 #' @rdname parn94
 #' @export
-parn94.pi_sparse_spectrum <- function(x, par = parn94_params()) {
+parn94.pi_sparse_spectrum <- function(x, par = parn94_params(), ...) {
   x <- preprocess_spectrum(x, par)
   .parn94() %>%
     add_pure_spectrum(x, par) %>%

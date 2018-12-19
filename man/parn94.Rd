@@ -6,11 +6,11 @@
 \alias{parn94.pi_sparse_spectrum}
 \title{Parncutt & Strasburger (1994)}
 \usage{
-parn94(x, par = parn94_params())
+parn94(x, par = parn94_params(), ...)
 
-\method{parn94}{default}(x, par = parn94_params())
+\method{parn94}{default}(x, par = parn94_params(), ...)
 
-\method{parn94}{pi_sparse_spectrum}(x, par = parn94_params())
+\method{parn94}{pi_sparse_spectrum}(x, par = parn94_params(), ...)
 }
 \arguments{
 \item{x}{Object to analyse,
@@ -29,6 +29,14 @@ such as produced by \code{\link[hrep]{pi_chord}()} and
 }}
 
 \item{par}{Parameter list as created by \code{\link{parn94_params}()}.}
+
+\item{...}{Parameters to pass to \code{\link[hrep]{pi_sparse_spectrum}}.
+\itemize{
+\item \code{num_harmonics}: Number of harmonics to use when expanding
+chord tones into their implied harmonics.
+\item \code{roll_off}: Determines the rate of amplitude roll-off
+for the harmonics.
+}}
 }
 \value{
 An list of class \code{parn94}, comprising the following components:
