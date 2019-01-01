@@ -7,12 +7,12 @@
 #' to assign to a spectral component of amplitude 1.
 #' By default, amplitude 1 corresponds to the amplitude of each chord pitch's
 #' fundamental frequency (though this can be changed by expressing input chords
-#' as pitch-class sparse spectra, see \code{\link[hrep]{pi_sparse_spectrum}()}).
+#' as pitch-class sparse spectra, see \code{\link[hrep]{sparse_pi_spectrum}()}).
 #' @param template_num_harmonics (Integerish scalar) Number of harmonics to
 #' include in the spectral template, including the fundamental frequency.
 #' @param template_roll_off (Numeric scalar) Roll-off rate for the
 #' harmonic template. This parameter is passed to
-#' \code{\link[hrep]{pi_sparse_spectrum}()}.
+#' \code{\link[hrep]{sparse_pi_spectrum}()}.
 #' @param k_t (Numeric scalar) Relative perceptual weighting of complex versus pure tones.
 #' @param k_p (Numeric scalar) Scaling coefficient for pure sonorousness.
 #' @param k_c (Numeric scalar) Scaling coefficient for complex sonorousness.

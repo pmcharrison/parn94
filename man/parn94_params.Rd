@@ -13,14 +13,14 @@ parn94_params(unit_amplitude_in_dB = 60, template_num_harmonics = 11,
 to assign to a spectral component of amplitude 1.
 By default, amplitude 1 corresponds to the amplitude of each chord pitch's
 fundamental frequency (though this can be changed by expressing input chords
-as pitch-class sparse spectra, see \code{\link[hrep]{pi_sparse_spectrum}()}).}
+as pitch-class sparse spectra, see \code{\link[hrep]{sparse_pi_spectrum}()}).}
 
 \item{template_num_harmonics}{(Integerish scalar) Number of harmonics to
 include in the spectral template, including the fundamental frequency.}
 
 \item{template_roll_off}{(Numeric scalar) Roll-off rate for the
 harmonic template. This parameter is passed to
-\code{\link[hrep]{pi_sparse_spectrum}()}.}
+\code{\link[hrep]{sparse_pi_spectrum}()}.}
 
 \item{k_t}{(Numeric scalar) Relative perceptual weighting of complex versus pure tones.}
 

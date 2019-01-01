@@ -24,7 +24,7 @@ template_match <- function(fundamental, template, spectrum, par) {
 
 get_template <- function(par) {
   hrep::pi_chord(0) %>%
-    {hrep::pi_sparse_spectrum(.,
+    {hrep::sparse_pi_spectrum(.,
                               num_harmonics = par$template_num_harmonics,
                               roll_off = par$template_roll_off,
                               round = TRUE)} %>%

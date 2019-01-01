@@ -3,19 +3,19 @@
 \name{parn94}
 \alias{parn94}
 \alias{parn94.default}
-\alias{parn94.pi_sparse_spectrum}
+\alias{parn94.sparse_pi_spectrum}
 \title{Parncutt & Strasburger (1994)}
 \usage{
 parn94(x, par = parn94_params(), ...)
 
 \method{parn94}{default}(x, par = parn94_params(), ...)
 
-\method{parn94}{pi_sparse_spectrum}(x, par = parn94_params(), ...)
+\method{parn94}{sparse_pi_spectrum}(x, par = parn94_params(), ...)
 }
 \arguments{
 \item{x}{Object to analyse,
 which will be coerced to an object of class
-\code{\link[hrep]{pi_sparse_spectrum}}.
+\code{\link[hrep]{sparse_pi_spectrum}}.
 Various input types are possible:
 \itemize{
 \item Numeric vectors will be treated as vectors of MIDI note numbers,
@@ -25,17 +25,16 @@ The first element should be a vector of MIDI note numbers,
 the second a vector of amplitudes.
 \item The function also accepts classes from the \code{hrep} package,
 such as produced by \code{\link[hrep]{pi_chord}()} and
-\code{\link[hrep]{pi_sparse_spectrum}()}.
+\code{\link[hrep]{sparse_pi_spectrum}()}.
 }}
 
 \item{par}{Parameter list as created by \code{\link{parn94_params}()}.}
 
-\item{...}{Parameters to pass to \code{\link[hrep]{pi_sparse_spectrum}}.
+\item{...}{Parameters to pass to \code{\link[hrep]{sparse_pi_spectrum}}.
 \itemize{
 \item \code{num_harmonics}: Number of harmonics to use when expanding
 chord tones into their implied harmonics.
-\item \code{roll_off}: Determines the rate of amplitude roll-off
-for the harmonics.
+\item \code{roll_off}: Rate of amplitude roll-off for the harmonics.
 }}
 }
 \value{

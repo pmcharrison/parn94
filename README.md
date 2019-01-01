@@ -27,8 +27,8 @@ isolation and in combination.
 Most functions can be used with numeric inputs, which will be
 interpreted as MIDI note numbers. Methods are also provided for various
 chord classes in the `hrep` package, such as `pi_chord`,
-`pi_sparse_spectrum`, and so on. These inputs are internally coerced to
-`pi_sparse_spectrum` before continuing the analysis.
+`sparse_pi_spectrum`, and so on. These inputs are internally coerced to
+`sparse_pi_spectrum` before continuing the analysis.
 
 Key functions include:
 

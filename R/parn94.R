@@ -5,7 +5,7 @@
 #' \insertCite{Parncutt1994;textual}{parn94}.
 #' @param x Object to analyse,
 #' which will be coerced to an object of class
-#' \code{\link[hrep]{pi_sparse_spectrum}}.
+#' \code{\link[hrep]{sparse_pi_spectrum}}.
 #' Various input types are possible:
 #' * Numeric vectors will be treated as vectors of MIDI note numbers,
 #' which will be expanded into their implied harmonics.
@@ -14,9 +14,9 @@
 #' the second a vector of amplitudes.
 #' * The function also accepts classes from the \code{hrep} package,
 #' such as produced by \code{\link[hrep]{pi_chord}()} and
-#' \code{\link[hrep]{pi_sparse_spectrum}()}.
+#' \code{\link[hrep]{sparse_pi_spectrum}()}.
 #' @param par Parameter list as created by \code{\link{parn94_params}()}.
-#' @param ... Parameters to pass to \code{\link[hrep]{pi_sparse_spectrum}}.
+#' @param ... Parameters to pass to \code{\link[hrep]{sparse_pi_spectrum}}.
 #' * \code{num_harmonics}: Number of harmonics to use when expanding
 #' chord tones into their implied harmonics.
 #' * \code{roll_off}: Rate of amplitude roll-off for the harmonics.
@@ -44,13 +44,13 @@ parn94 <- function(x, par = parn94_params(), ...) {
 #' @rdname parn94
 #' @export
 parn94.default <- function(x, par = parn94_params(), ...) {
-  x <- hrep::pi_sparse_spectrum(x, round = TRUE, ...)
+  x <- hrep::sparse_pi_spectrum(x, round = TRUE, ...)
   parn94(x, par = par)
 }
 
 #' @rdname parn94
 #' @export
-parn94.pi_sparse_spectrum <- function(x, par = parn94_params(), ...) {
+parn94.sparse_pi_spectrum <- function(x, par = parn94_params(), ...) {
   x <- preprocess_spectrum(x, par)
   .parn94() %>%
     add_pure_spectrum(x, par) %>%

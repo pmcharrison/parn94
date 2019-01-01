@@ -13,7 +13,7 @@ test_that("testing against legacy code", {
   test(c(60, 64, 67), 2.835933, par = parn94_params(unit_amplitude_in_dB = 50))
   test(c(61, 62, 63), 1.293558, par = parn94_params(unit_amplitude_in_dB = 70))
 
-  test(hrep::pi_sparse_spectrum(c(60, 64, 67), roll_off = 2, round = TRUE),
+  test(hrep::sparse_pi_spectrum(c(60, 64, 67), roll_off = 2, round = TRUE),
        2.899631)
 
   # HarmonyParncutt::get_parncutt_sonority_analysis(
