@@ -4,14 +4,7 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
+
 
 # parn94: Implementation of Richard Parncutt's Psychoacoustic Harmony Algorithms
 
@@ -60,7 +53,8 @@ of a pair of sonorities.
 - `pitch_distance()` - estimates the *pitch distance*
 between a pair of sonorities.
 
-```{r}
+
+```r
 library(parn94)
 
 c_maj <- c(60, 64, 67) # C major triad
@@ -69,23 +63,33 @@ g_maj <- c(59, 62, 67) # G major triad
 
 # Pure sonorousness
 pure_sonor(c_maj)
+#> [1] 0.6157366
 pure_sonor(c_dim)
+#> [1] 0.4758778
 
 # Complex sonorousness
 complex_sonor(c_maj)
+#> [1] 0.309965
 complex_sonor(c_dim)
+#> [1] 0.147792
 
 # Multiplicity
 multiplicity(c_maj)
+#> [1] 2.843946
 multiplicity(c_dim)
+#> [1] 3.192587
 
 # Pitch commonality
 pitch_commonality(c_maj, g_maj)
+#> [1] 0.3496254
 pitch_commonality(c_maj, c_dim)
+#> [1] 0.2535183
 
 # Pitch distance
 pitch_distance(c_maj, g_maj)
+#> [1] 1.495423
 pitch_distance(c_maj, c_dim)
+#> [1] 1.003077
 ```
 
 ## References

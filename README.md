@@ -3,7 +3,13 @@
 
 # parn94: Implementation of Richard Parncutt’s Psychoacoustic Harmony Algorithms
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Travis build
+status](https://travis-ci.org/pmcharrison/parn94.svg?branch=master)](https://travis-ci.org/pmcharrison/parn94)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/pmcharrison/parn94?branch=master&svg=true)](https://ci.appveyor.com/project/pmcharrison/parn94)
+[![Coverage
+status](https://coveralls.io/repos/github/pmcharrison/parn94/badge.svg)](https://coveralls.io/r/pmcharrison/parn94?branch=master)
 
 `parn94` is an R package that implements Richard Parncutt’s
 psychoacoustic harmony algorithms, as described in Parncutt &
