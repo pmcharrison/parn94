@@ -1,6 +1,6 @@
 Package: parn94
 Title: Implementation of Richard Parncutt's Psychoacoustic Harmony Algorithms
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: person("Peter", "Harrison", email = "p.m.c.harrison@qmul.ac.uk", role = c("aut", "cre"))
 Description: This package presents an implementation of Richard Parncutt's psychoacoustic harmony analysis algorithms, as described in Parncutt & Strasburger (1994).
 Depends: R (>= 3.4.0)
