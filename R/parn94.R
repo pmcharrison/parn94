@@ -24,7 +24,7 @@
 #' chord tones into their implied harmonics.
 #' * \code{roll_off}: Rate of amplitude roll-off for the harmonics.
 #'
-#' return An list of class \code{parn94}, comprising the following components:
+#' @return An list of class \code{parn94}, comprising the following components:
 #' \item{pure_spectrum}{A tibble describing the sonority's pure spectrum.
 #' The pure spectrum is a spectral representation of the input sound
 #' after auditory masking, but before pattern matching.}
