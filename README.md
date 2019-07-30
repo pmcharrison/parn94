@@ -23,7 +23,7 @@ the following commands into R:
 
 ``` r
 if (!require(devtools)) install.packages("devtools")
-devtools::install_github("parn94")
+devtools::install_github("pmcharrison/parn94")
 ```
 
 ## Example usage
