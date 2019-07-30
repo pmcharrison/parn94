@@ -35,10 +35,9 @@ such as produced by \code{\link[hrep]{pi_chord}()} and
 \item \code{num_harmonics}: Number of harmonics to use when expanding
 chord tones into their implied harmonics.
 \item \code{roll_off}: Rate of amplitude roll-off for the harmonics.
-}}
 }
-\value{
-An list of class \code{parn94}, comprising the following components:
+
+return An list of class \code{parn94}, comprising the following components:
 \item{pure_spectrum}{A tibble describing the sonority's pure spectrum.
 The pure spectrum is a spectral representation of the input sound
 after auditory masking, but before pattern matching.}
@@ -49,7 +48,7 @@ harmonic template matching.}
 The combined spectrum corresponds to the combination of the
 pure and complex spectra.}
 \item{par}{A list comprising the parameters used to perform the analysis,
-as created by \code{\link{parn94_params}()}.}
+as created by \code{\link{parn94_params}()}.}}
 }
 \description{
 This function analyses a sonority using Richard Parncutt's

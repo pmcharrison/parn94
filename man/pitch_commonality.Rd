@@ -7,9 +7,11 @@
 pitch_commonality(x, y, ...)
 }
 \arguments{
-\item{x}{The first sonority to compare.}
+\item{x}{The first sonority to compare, passed to \code{\link{pitch_salience}()}.
+Typically will be a numeric vector of MIDI pitches.}
 
-\item{y}{The second sonority to compare.}
+\item{y}{The second sonority to compare, passed to \code{\link{pitch_salience}()}.
+Typically will be a numeric vector of MIDI pitches.}
 
 \item{...}{Further arguments to pass to \code{\link{pitch_salience}()}.}
 }

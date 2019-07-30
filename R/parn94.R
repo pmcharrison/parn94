@@ -3,6 +3,7 @@
 #' This function analyses a sonority using Richard Parncutt's
 #' psychoacoustic model of harmony, as described in
 #' \insertCite{Parncutt1994;textual}{parn94}.
+#'
 #' @param x Object to analyse,
 #' which will be coerced to an object of class
 #' \code{\link[hrep]{sparse_pi_spectrum}}.
@@ -15,12 +16,15 @@
 #' * The function also accepts classes from the \code{hrep} package,
 #' such as produced by \code{\link[hrep]{pi_chord}()} and
 #' \code{\link[hrep]{sparse_pi_spectrum}()}.
+#'
 #' @param par Parameter list as created by \code{\link{parn94_params}()}.
+#'
 #' @param ... Parameters to pass to \code{\link[hrep]{sparse_pi_spectrum}}.
 #' * \code{num_harmonics}: Number of harmonics to use when expanding
 #' chord tones into their implied harmonics.
 #' * \code{roll_off}: Rate of amplitude roll-off for the harmonics.
-#' @return An list of class \code{parn94}, comprising the following components:
+#'
+#' return An list of class \code{parn94}, comprising the following components:
 #' \item{pure_spectrum}{A tibble describing the sonority's pure spectrum.
 #' The pure spectrum is a spectral representation of the input sound
 #' after auditory masking, but before pattern matching.}
@@ -32,10 +36,14 @@
 #' pure and complex spectra.}
 #' \item{par}{A list comprising the parameters used to perform the analysis,
 #' as created by \code{\link{parn94_params}()}.}
+#'
 #' @references
 #' \insertAllCited{}
+#'
 #' @rdname parn94
+#'
 #' @md
+#'
 #' @export
 parn94 <- function(x, par = parn94_params(), ...) {
   UseMethod("parn94")

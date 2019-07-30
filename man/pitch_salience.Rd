@@ -3,6 +3,7 @@
 \name{pitch_salience}
 \alias{pitch_salience}
 \alias{pitch_salience.default}
+\alias{pitch_salience.pitch_salience}
 \alias{pitch_salience.parn94}
 \title{Get pitch salience}
 \usage{
@@ -10,10 +11,12 @@ pitch_salience(x, ...)
 
 \method{pitch_salience}{default}(x, ...)
 
+\method{pitch_salience}{pitch_salience}(x, ...)
+
 \method{pitch_salience}{parn94}(x, ...)
 }
 \arguments{
-\item{x}{Object to analyse.}
+\item{x}{Object to analyse, passed to \code{\link{parn94}()}.}
 
 \item{...}{Further arguments to pass to \code{\link{parn94}()}.}
 }
