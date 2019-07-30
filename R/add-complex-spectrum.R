@@ -28,6 +28,6 @@ get_template <- function(par) {
                               num_harmonics = par$template_num_harmonics,
                               roll_off = par$template_roll_off,
                               round = TRUE)} %>%
-    (tibble::as.tibble) %>%
+    (tibble::as_tibble) %>%
     {magrittr::set_names(., c("interval", "weight"))}
 }

@@ -2,12 +2,20 @@
 #'
 #' Gets the pitch commonality between two sonorities, after
 #' \insertCite{Parncutt1994;textual}{parn94}.
-#' @param x The first sonority to compare.
-#' @param y The second sonority to compare.
+#'
+#' @param x The first sonority to compare, passed to \code{\link{pitch_salience}()}.
+#' Typically will be a numeric vector of MIDI pitches.
+#'
+#' @param y The second sonority to compare, passed to \code{\link{pitch_salience}()}.
+#' Typically will be a numeric vector of MIDI pitches.
+#'
 #' @param ... Further arguments to pass to \code{\link{pitch_salience}()}.
+#'
 #' @return Pitch commonality, as a numeric scalar.
+#'
 #' @references
 #' \insertAllCited{}
+#'
 #' @export
 pitch_commonality <- function(x, y, ...) {
   s1 <- pitch_salience(x, ...)

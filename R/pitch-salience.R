@@ -2,7 +2,7 @@
 #'
 #' Analyses the pitch salience of a sonority, after
 #' \insertCite{Parncutt1994;textual}{parn94}.
-#' @param x Object to analyse.
+#' @param x Object to analyse, passed to \code{\link{parn94}()}.
 #' @param ... Further arguments to pass to \code{\link{parn94}()}.
 #' @return Returns a vector where each element describes
 #' the salience of a different chromatic pitch.
@@ -22,6 +22,12 @@ pitch_salience <- function(x, ...) {
 pitch_salience.default <- function(x, ...) {
   x <- parn94(x, ...)
   pitch_salience(x)
+}
+
+#' @rdname pitch_salience
+#' @export
+pitch_salience.pitch_salience <- function(x, ...) {
+  x
 }
 
 #' @rdname pitch_salience
