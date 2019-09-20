@@ -52,7 +52,7 @@ parn94 <- function(x, par = parn94_params(), ...) {
 #' @rdname parn94
 #' @export
 parn94.default <- function(x, par = parn94_params(), ...) {
-  x <- hrep::sparse_pi_spectrum(x, round = TRUE, ...)
+  x <- hrep::sparse_pi_spectrum(x, digits = 0, ...)
   parn94(x, par = par)
 }
 

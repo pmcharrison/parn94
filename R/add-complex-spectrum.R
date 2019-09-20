@@ -27,7 +27,7 @@ get_template <- function(par) {
     {hrep::sparse_pi_spectrum(.,
                               num_harmonics = par$template_num_harmonics,
                               roll_off = par$template_roll_off,
-                              round = TRUE)} %>%
+                              digits = 0)} %>%
     (tibble::as_tibble) %>%
     {magrittr::set_names(., c("interval", "weight"))}
 }
