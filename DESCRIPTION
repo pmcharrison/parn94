@@ -1,6 +1,6 @@
 Package: parn94
 Title: Implementation of Richard Parncutt's Psychoacoustic Harmony Algorithms
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: person("Peter", "Harrison", email = "p.m.c.harrison@qmul.ac.uk", role = c("aut", "cre"))
 Description: This package presents an implementation of Richard Parncutt's psychoacoustic harmony analysis algorithms, as described in Parncutt & Strasburger (1994).
 Depends: R (>= 3.4.0)
@@ -10,19 +10,19 @@ LazyData: true
 RoxygenNote: 6.1.1
 RdMacros: Rdpack
 Imports: 
-    assertthat,
-    magrittr,
-    hrep,
-    tibble,
-    purrr,
-    Rdpack,
+    assertthat (>= 0.2.1),
+    magrittr (>= 1.5),
+    hrep (>= 0.10.0.9000),
+    tibble (>= 2.1.3),
+    purrr (>= 0.3.2),
+    Rdpack (>= 0.11.0),
     methods
 Suggests: 
-    testthat,
-    knitr,
-    rmarkdown,
-    ggplot2,
-    apa,
-    covr
+    testthat (>= 2.1.1),
+    knitr (>= 1.23),
+    rmarkdown (>= 1.11),
+    ggplot2 (>= 3.1.0.9000),
+    apa (>= 0.3.2),
+    covr (>= 3.2.1)
 VignetteBuilder: knitr
 Remotes: pmcharrison/hrep
