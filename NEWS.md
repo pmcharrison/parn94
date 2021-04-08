@@ -1,3 +1,5 @@
+# parn94 0.3.0
+
 * Remove `apa` dependency.
 
 # parn94 0.2.3
