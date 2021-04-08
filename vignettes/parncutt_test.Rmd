@@ -4,7 +4,7 @@ author: "Peter M. C. Harrison"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Testing the pitch commonality algorithm}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: "`r system.file('bib.bib', package = 'parn94')`"
@@ -18,7 +18,6 @@ library(ggplot2)
 library(parn94)
 library(magrittr)
 library(purrr)
-library(apa)
 
 bigand_1996 <- system.file("bigand1996/compiled/bigand_1996.rds", 
                            package = "parn94", mustWork = TRUE) %>% readRDS
@@ -53,6 +52,12 @@ ggplot(df, aes(x = pitch_commonality_new, y = pitch_commonality)) +
   scale_y_continuous("Bigand et al. (1996) implementation")
 ```
 
-The two sets of values are highly correlated (`r apa(cor.test(df$pitch_commonality, df$pitch_commonality_new))`). The differences between the results are likely to be down to the slightly different methodologies underpinning the algorithms; @Bigand1996 use the algorithm from @Parncutt1989, whereas we use the algorithm from @Parncutt1994, which uses a slightly different similarity measure for the two pitch salience profiles.
+The two sets of values are highly correlated:
+
+```{r}
+cor.test(df$pitch_commonality, df$pitch_commonality_new)
+```
+
+The differences between the results are likely to be down to the slightly different methodologies underpinning the algorithms; @Bigand1996 use the algorithm from @Parncutt1989, whereas we use the algorithm from @Parncutt1994, which uses a slightly different similarity measure for the two pitch salience profiles.
 
 ## References

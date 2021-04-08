@@ -4,8 +4,13 @@
 \alias{get_partial_masking_level}
 \title{Get partial masking level}
 \usage{
-get_partial_masking_level(masker_auditory_level, masker_pure_tone_height,
-  maskee_auditory_level, maskee_pure_tone_height, k_m)
+get_partial_masking_level(
+  masker_auditory_level,
+  masker_pure_tone_height,
+  maskee_auditory_level,
+  maskee_pure_tone_height,
+  k_m
+)
 }
 \arguments{
 \item{masker_auditory_level}{Numeric vector of masker auditory levels.}

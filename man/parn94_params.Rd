@@ -4,9 +4,19 @@
 \alias{parn94_params}
 \title{Model parameters}
 \usage{
-parn94_params(unit_amplitude_in_dB = 60, template_num_harmonics = 11,
-  template_roll_off = 1, k_t = 3, k_p = 0.5, k_c = 0.2,
-  k_s = 0.5, k_m = 12, al_0 = 15, min_midi = 0, max_midi = 120)
+parn94_params(
+  unit_amplitude_in_dB = 60,
+  template_num_harmonics = 11,
+  template_roll_off = 1,
+  k_t = 3,
+  k_p = 0.5,
+  k_c = 0.2,
+  k_s = 0.5,
+  k_m = 12,
+  al_0 = 15,
+  min_midi = 0,
+  max_midi = 120
+)
 }
 \arguments{
 \item{unit_amplitude_in_dB}{(Numeric scalar) Describes the number of decibels

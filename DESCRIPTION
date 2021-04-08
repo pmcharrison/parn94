@@ -7,7 +7,7 @@ Depends: R (>= 3.4.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 RdMacros: Rdpack
 Imports: 
     assertthat (>= 0.2.1),
@@ -22,7 +22,6 @@ Suggests:
     knitr (>= 1.23),
     rmarkdown (>= 1.11),
     ggplot2 (>= 3.1.0.9000),
-    apa (>= 0.3.2),
     covr (>= 3.2.1)
 VignetteBuilder: knitr
 Remotes: pmcharrison/hrep
